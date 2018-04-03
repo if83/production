@@ -8,6 +8,7 @@ class sonarqube (
   $user_home        = '/var/local/sonar',
   $service          = 'sonar',
   $inst_root        = '/usr/local',
+  # set undef value of <dport> when use external firewall module
   $dport            = 9000,
   $source_url       = 'https://sonarsource.bintray.com/Distribution/sonarqube',
   $coockies         = '--no-check-certificate',
@@ -161,23 +162,23 @@ class sonarqube (
     # require    => File["/etc/init.d/${service}"],
   }
 
-  ->
-  exec { 'firewall-cmd':
-    command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
-    notify  => Exec['firewall-reload'],
-  }
-
-  ->
-  exec { 'firewall-reload':
-    command => "firewall-cmd --reload",
-    notify  => Service['firewalld'],
-  }
-
-  ->
-  service { 'firewalld':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-  }
+  # if $dport != undef {
+  #   exec { 'firewall-cmd':
+  #     command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
+  #     notify  => Exec['firewall-reload'],
+  #   }
+  #   ->
+  #   exec { 'firewall-reload':
+  #     command => "firewall-cmd --reload",
+  #     notify  => Service['firewalld'],
+  #   }
+  #   ->
+  #   service { 'firewalld':
+  #     ensure     => running,
+  #     enable     => true,
+  #     hasrestart => true,
+  #   }    
+  # }
+  
 }
 

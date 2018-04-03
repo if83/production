@@ -9,13 +9,14 @@
 class postgres (
   $ensure           = 'installed',
   $version          = '9.6',
-  $admin_pass       = 'N3WP@55',
+  $admin_pass       = 'adminpass',
   $owner            = 'sonar',
   $db_pass          = 'sonar',
   $dbname           = 'sonar',
   $user_host        = 'localhost',
   $source_url       = 'https://download.postgresql.org/pub/repos/',
   $dport            = '5432',
+  # $setfirewall      = 'off'
 
 ){
   
@@ -41,13 +42,7 @@ class postgres (
     command => "yum -y install ${source_url}${uri}",
     creates => "/etc/yum.repos.d/pgdg-${short_vers}-centos.repo",
     user    => 'root',
-    # unless  => "/etc/yum.repos.d/pgdg-${short_vers}-centos.repo",
-    #refreshonly => true,
   }
-  # package { "${source_url}${uri}":
-  #   ensure   => installed,
-  #   provider => 'yum',
-  # }
   ->
   package { "${pgsql}":
     ensure   => $ensure,
@@ -60,12 +55,7 @@ class postgres (
   }
 
   exec { 'initdb':
-    # command     => "psql -c \"initdb;\"",
-    # user        => "${psql_user}",
     command  => "/usr/pgsql-${version}/bin/postgresql${short_vers}-setup initdb",
-    # onliif   => "test ! -d /var/lib/pgsql/9.6/data/base"
-    # command  => 'postgresql96-setup initdb',
-    # cwd      => '/usr/pgsql-9.6/bin/',
     creates  => "/var/lib/pgsql/${version}/data/base/",
     # notify       => Service["postgresql-${version}"],
   }  
@@ -119,27 +109,21 @@ class postgres (
   	require     => Exec['createdb'],
   }
 
-  exec { 'firewall-port':
-    command     => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
-    notify      => Exec['firewall_reload'],
-  }
-  ->
-  exec { 'firewall-http':
-    command     => "firewall-cmd --zone=public --add-service=http --permanent",
-    notify      => Exec['firewall_reload'],
-  }
-  ->
-  exec { 'firewall_reload':
-    command     => "firewall-cmd --reload",
-    # notify      => Service['firewalld'],
-  }
-
-  # ->
-  # service { 'firewalld':
-  #   ensure     => running,
-  #   enable     => true,
-  #   hasrestart => true,
-  #   subscribe  => Exec['firewall-port'],
+  # if $setfirewall != 'off' {
+  #   exec { 'firewall-port':
+  #     command     => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
+  #     notify      => Exec['firewall_reload'],
+  #   }
+  #   ->
+  #   exec { 'firewall-http':
+  #     command     => "firewall-cmd --zone=public --add-service=http --permanent",
+  #     notify      => Exec['firewall_reload'],
+  #   }
+  #   ->
+  #   exec { 'firewall_reload':
+  #     command     => "firewall-cmd --reload",
+  #     # notify      => Service['firewalld'],
+  #   }
   # }
 }
 

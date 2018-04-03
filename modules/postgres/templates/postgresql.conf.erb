@@ -362,10 +362,10 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 					# 0 disables.
 
 # These are relevant when logging to syslog:
-#syslog_facility = 'LOCAL0'
-#syslog_ident = 'postgres'
-#syslog_sequence_numbers = on
-#syslog_split_messages = on
+syslog_facility = 'LOCAL0'
+syslog_ident = 'postgres'
+syslog_sequence_numbers = on
+syslog_split_messages = on
 
 # This is only relevant when logging to eventlog (win32):
 # (change requires restart)
@@ -373,7 +373,7 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 
 # - When to Log -
 
-#client_min_messages = notice		# values in order of decreasing detail:
+client_min_messages = notice		# values in order of decreasing detail:
 					#   debug5
 					#   debug4
 					#   debug3

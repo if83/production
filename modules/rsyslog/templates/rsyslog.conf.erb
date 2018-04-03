@@ -6,10 +6,10 @@
 #### MODULES ####
 
 # The imjournal module below is now used as a message source instead of imuxsock.
-$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
-$ModLoad imjournal # provides access to the systemd journal
-#$ModLoad imklog # reads kernel messages (the same are read from journald)
-#$ModLoad immark  # provides --MARK-- message capability
+module (load="imuxsock") # provides support for local system logging (e.g. via logger command)
+module (load="imjournal") # provides access to the systemd journal
+#module (load="imklog") # reads kernel messages (the same are read from journald)
+#module (load="immark")  # provides --MARK-- message capability
 
 <% if @hosttype['server'] -%>
 <% if @log_proto['udp'] -%>
@@ -26,16 +26,16 @@ module(load="imtcp")
 # *.* :ommysql:<%= @db_host %>,<%= @db_name %>,<%= @db_user %>,<%= @db_pass %>
 <% elsif @hosttype['client'] -%>
 
-template (name="LongTagForwardFormat" type="string"
+template (name="SuffixForwardFormat" type="string"
 string="<%%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%$.suffix%%msg:::sp-if-no-1st-sp%%msg%")
 
 ruleset(name="sendToLogserver") {
-    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="LongTagForwardFormat")
+    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat")
 }
 
 ruleset(name="myapp_logs") {
     # re_extract(expr, re, match, submatch, no-found)
-    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "all.log"), ".log", "");
+    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "common.log"), ".log", "");
     call sendToLogserver
 }
 
