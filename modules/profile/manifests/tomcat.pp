@@ -6,7 +6,7 @@ class profile::tomcat (
 ) {
 
   $tomcat = {
-    log_name => '/usr/tomcat/logs/*.log',
+    log_name => '/var/log/tomcat/*.log',
     app_name => 'tomcat',
     severity => 'info',
   }
