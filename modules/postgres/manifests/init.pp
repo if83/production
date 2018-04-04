@@ -16,8 +16,6 @@ class postgres (
   $user_host        = 'localhost',
   $source_url       = 'https://download.postgresql.org/pub/repos/',
   $dport            = '5432',
-  # $setfirewall      = 'off'
-
 ){
   
   $short_vers       = regsubst($version,'(\D)','')
@@ -57,8 +55,7 @@ class postgres (
   exec { 'initdb':
     command  => "/usr/pgsql-${version}/bin/postgresql${short_vers}-setup initdb",
     creates  => "/var/lib/pgsql/${version}/data/base/",
-    # notify       => Service["postgresql-${version}"],
-  }  
+ }  
 
   file { "/var/lib/pgsql/${version}/data/pg_hba.conf":
     ensure  => file,
@@ -79,7 +76,6 @@ class postgres (
   	ensure      => running,
   	hasrestart  => true,
   	hasstatus   => true,
-  	# provider    => 'redhat',
   }
 
   exec { 'alter_postgre':
@@ -108,23 +104,6 @@ class postgres (
     user        => "${psql_user}",
   	require     => Exec['createdb'],
   }
-
-  # if $setfirewall != 'off' {
-  #   exec { 'firewall-port':
-  #     command     => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
-  #     notify      => Exec['firewall_reload'],
-  #   }
-  #   ->
-  #   exec { 'firewall-http':
-  #     command     => "firewall-cmd --zone=public --add-service=http --permanent",
-  #     notify      => Exec['firewall_reload'],
-  #   }
-  #   ->
-  #   exec { 'firewall_reload':
-  #     command     => "firewall-cmd --reload",
-  #     # notify      => Service['firewalld'],
-  #   }
-  # }
 }
 
 
