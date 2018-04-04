@@ -18,7 +18,7 @@ class rpmrepo::install {
   }
 
   firewall::openport {'rpmrepo':
-    dports => '80',
+    dports => ['80',],
   }
 
   $fpm_needs= ['ruby-devel', 'gcc', 'make', 'rpm-build', 'rubygems',]
