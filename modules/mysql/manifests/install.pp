@@ -8,9 +8,8 @@
 #   include mysql::install
 class mysql::install {
 
-{ 
-	$facts['os']['family'] ? {
-    'RedHat': {
+ case $::osfamily {
+    'RedHat':  {
  	$releasever = "7"
  	$basearch   = $hardwaremodel
 
@@ -18,16 +17,16 @@ class mysql::install {
     $repo_descr = "MySQL $mysql::mysql_version Community Server"
     $repo_url   = "http://repo.mysql.com/yum/mysql-${mysql::mysql_version}-community/el/$releasever/$basearch/"
  	}
-  
-    yumrepo { "mysql-repo":
-      descr       => $repo_descr,
-      enabled     => 1,
-      baseurl     => $repo_url,
-      gpgcheck    => 0;
-    }
-    }
-  }
 }
+}
+
+yumrepo { "mysql-repo":
+  descr       => $repo_descr,
+  enabled     => 1,
+  baseurl     => $repo_url,
+  gpgcheck    => 0,
+    }
+
 package { 'mysql-community-server':
   ensure  => present,
   require => Yumrepo['mysql-repo'],
