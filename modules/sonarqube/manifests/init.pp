@@ -13,7 +13,7 @@ class sonarqube (
   $coockies         = '--no-check-certificate',
   $source_dir       = '/usr/local/src',
   $arch             = $sonarqube::params::arch,
-  # Connection strings values
+  # Connection strings values  
   # values allowed for <db_provider> are: 'embedded' , 'mysql' , 'psql' , 'oracle' , 'mssql_ms' , 'mssql_sql'
   # in case of "embedded" <db_provider> sets, the <db_host> parameter going to be ignored
   $db_provider      = 'embedded',
@@ -35,9 +35,7 @@ class sonarqube (
   $package_name   = 'sonarqube'
   $zipname        = "${package_name}-${version}.zip"
   $ziproute       = "${source_dir}/${zipname}"
-  $installdir = "${inst_root}/${service}"
-  # $extensions_dir = "${user_home}/extensions"
-  # $plugin_dir = "${extensions_dir}/plugins"
+  $installdir     = "${inst_root}/${service}"
 
   $script = "${installdir}/bin/${arch}/sonar.sh"
   $pid_d  = "${installdir}/bin/${arch}/./SonarQube.pid"
@@ -158,26 +156,6 @@ class sonarqube (
     hasrestart => true,
     hasstatus  => true,
     enable     => true,
-    # require    => File["/etc/init.d/${service}"],
-  }
-
-  ->
-  exec { 'firewall-cmd':
-    command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
-    notify  => Exec['firewall-reload'],
-  }
-
-  ->
-  exec { 'firewall-reload':
-    command => "firewall-cmd --reload",
-    notify  => Service['firewalld'],
-  }
-
-  ->
-  service { 'firewalld':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
   }
 }
 

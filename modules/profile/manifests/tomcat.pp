@@ -1,5 +1,5 @@
 class profile::tomcat (  
-    $dports         = ['80', '8080', '8080'],
+    $dports         = ['80', '8080'],
     $ssh_user       = 'if083',
     $ssh_group      = 'wheel',
     $ssh_password   = 'derferterela',
