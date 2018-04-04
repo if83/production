@@ -6,10 +6,10 @@
 #### MODULES ####
 
 # The imjournal module below is now used as a message source instead of imuxsock.
-module (load="imuxsock") # provides support for local system logging (e.g. via logger command)
-module (load="imjournal") # provides access to the systemd journal
-#module (load="imklog") # reads kernel messages (the same are read from journald)
-#module (load="immark")  # provides --MARK-- message capability
+$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
+$ModLoad imjournal # provides access to the systemd journal
+#$ModLoad imklog # reads kernel messages (the same are read from journald)
+#$ModLoad immark  # provides --MARK-- message capability
 
 <% if @hosttype['server'] -%>
 <% if @log_proto['udp'] -%>
@@ -30,7 +30,8 @@ template (name="SuffixForwardFormat" type="string"
 string="<%%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%$.suffix%%msg:::sp-if-no-1st-sp%%msg%")
 
 ruleset(name="sendToLogserver") {
-    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat")
+
+    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat" resendlastmsgonreconnect="on" resumeRetryCount="-1" queue.filename="forwarding" queue.size="1000000" queue.type="LinkedList" queue.saveonshutdown="on")
 }
 
 ruleset(name="myapp_logs") {
@@ -86,12 +87,11 @@ string="/var/log/remote/%HOSTNAME%/%PROGRAMNAME:::secpath-replace%.log"
 ruleset(name="RemoteApps"){
 #     authpriv.*   action(type="omfile" DynaFile="TmplAuthpriv")
 #      *.info;mail.none;authpriv.none;cron.none action(type="omfile" DynaFile="TmplMsg")
-      *.* action(type="omfile" DynaFile="TmplMsg")
+    *.* action(type="omfile" DynaFile="TmplMsg")
 }
 
 <% if @log_proto['tcp'] -%>
 input(type="imtcp" port="<%= @dport %>" ruleset="RemoteApps")
-#input(type="imtcp" port="10514" ruleset="Remote")
 
 <% elsif @log_proto['udp'] -%>
 input(type="imudp" port="<%= @dport %>" ruleset="RemoteApps")
@@ -113,7 +113,7 @@ input(type="imudp" port="<%= @dport %>" ruleset="RemoteApps")
 authpriv.*                                              /var/log/secure
 
 # Log all the mail messages in one place.
-mail.*                                                  -/var/log/maillog
+mail.*                                                  /var/log/maillog
 
 
 # Log cron stuff

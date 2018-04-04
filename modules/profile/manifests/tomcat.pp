@@ -1,5 +1,5 @@
 class profile::tomcat (  
-    $dports         = ['80', '8080', '8080'],
+    $dports         = ['80', '8080'],
     $ssh_user       = 'if083',
     $ssh_group      = 'wheel',
     $ssh_password   = 'derferterela',
@@ -16,7 +16,10 @@ class profile::tomcat (
     severity => 'info',
   }
   $apps   = [$tomcat, $httpd]
-  include java8
+
+  class { 'java8':
+    java_se      => $java_mode,
+  }
   include tomcat
   include firewall
 

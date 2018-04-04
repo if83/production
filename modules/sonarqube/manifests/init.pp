@@ -8,7 +8,6 @@ class sonarqube (
   $user_home        = '/var/local/sonar',
   $service          = 'sonar',
   $inst_root        = '/usr/local',
-  # set undef value of <dport> when use external firewall module
   $dport            = 9000,
   $source_url       = 'https://sonarsource.bintray.com/Distribution/sonarqube',
   $coockies         = '--no-check-certificate',
@@ -36,7 +35,7 @@ class sonarqube (
   $package_name   = 'sonarqube'
   $zipname        = "${package_name}-${version}.zip"
   $ziproute       = "${source_dir}/${zipname}"
-  $installdir = "${inst_root}/${service}"
+  $installdir     = "${inst_root}/${service}"
   # $extensions_dir = "${user_home}/extensions"
   # $plugin_dir = "${extensions_dir}/plugins"
 
@@ -161,7 +160,7 @@ class sonarqube (
     enable     => true,
     # require    => File["/etc/init.d/${service}"],
   }
-
+  ##### Uncomment this block when not using common firewall module #####
   # if $dport != undef {
   #   exec { 'firewall-cmd':
   #     command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
