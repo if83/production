@@ -11,7 +11,7 @@ pid-file=/var/run/mysqld/mysqld.pid
 ### MANAGED BY PUPPET ###
 
 log-bin = mysql-bin
-server-id = <%= @serverid %>
+server-id = <%= $mysql_serverid %>
 relay-log = relay-log-slave
 gtid-mode =ON
 enforce-gtid-consistency

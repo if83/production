@@ -15,7 +15,7 @@ define mysql::users(
 )
 {
 include mysql
-$r_pass = $mysql::rootpass::root_pass
+$r_pass = $mysql::mysql_root_password
 Exec {
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
 }

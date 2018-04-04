@@ -1,14 +1,16 @@
 class profile::mysqlserver::replication (
-# $serverid = "2", # Provide the Server ID = 1.2.3.... etc
-  $datadir                = "/var/lib/mysql", # can also be defined under my.cnf
-  $port                   = ['3306'], # can also be defined under my.cnf
-# $bind_address           = "0.0.0.0",  # can also be defined under my.cnf
-  $replica_user           = "replication", # For master, what is the replication account
-  $replica_password       = "Pr0m3Teus!", # Replication User password
-# $replica_password_hash  = '*D36660B5249B066D7AC5A1A14CECB71D36944CBC', # the same replication account password hashed
-  $is_slave               = true,  # True if the node is slave
-  $master_ip              = "192.168.56.150",     # The IP Address of the master in case this is a slave
-  $master_port            = "3306", # The port where the master is listening to
+  $mysql_root_password = "a8+?treAvpDa",
+  $mysql_distro        = "community",
+  $mysql_version       = "5.7",
+  $mysql_serverid      = "2", # Provide the Server ID = 1.2.3.... etc
+  $datadir             = "/var/lib/mysql", # can also be defined under my.cnf
+  $port                = ['3306'], # can also be defined under my.cnf
+# $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
+  $replica_user        = "replication", # For master, what is the replication account
+  $replica_passwor     = "Pr0m3Teus!", # Replication User password
+  $is_slave            = true,  # True if the node is slave
+  $master_ip           = "192.168.56.150",     # The IP Address of the master in case this is a slave
+  $master_port         = "3306", # The port where the master is listening to
 
 )
 { 
@@ -20,6 +22,12 @@ firewall::openport {'mysqlslave':
     dports => $port,
   }
 
+class { 'mysql':
+  mysql_root_password => $mysql_root_password,
+  mysql_distro        => $mysql_distro,
+  mysql_version       => $mysql_version,
+  mysql_serverid      => $mysql_serverid,
+}
   if $is_slave {
     validate_ip_address($master_ip)  # IP Address must be set to identify the master
     $cmd_change_master = join(["CHANGE MASTER TO MASTER_HOST","\'${master_ip}\',MASTER_PORT","${master_port},MASTER_USER","\'${replica_user}\',MASTER_PASSWORD","\'${replica_password}\';"], "=") 

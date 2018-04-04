@@ -6,7 +6,22 @@
 #
 # @example
 #   include mysql
-class mysql {
+class mysql (
+	$mysql_root_password = undef,
+	$mysql_distro        = "community",
+	$mysql_version       = "5.7",
+	$mysql_serverid      = undef,
+#	$ensure              = "running",
+)
+
+{
+  if $mysql::mysql_version == "5.7" {
+    $mysql_ver="57"
+  }
+    elsif $mysql::mysql_version == "5.6" {
+    $mysql_ver="56"
+  }    
+ 
   include mysql::install
   include mysql::configure
   include mysql::service

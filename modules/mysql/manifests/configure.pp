@@ -6,9 +6,7 @@
 #
 # @example
 #   include mysql::configure
-class mysql::configure (
-  $bind = '0.0.0.0',
-)
+class mysql::configure
 {
   $conf_name = $facts['os']['family'] ? {
     'RedHat' => 'mysql-redhat.cnf.erb',

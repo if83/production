@@ -13,14 +13,14 @@ define mysql::db(
 )
 {
 include mysql
-$r_pass = $mysql::rootpass::root_pass
+$r_pass = $mysql::mysql_root_password
 Exec {
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
 }
 exec {"${title}":
   command => "mysql -u root -p'${r_pass}' -e \"CREATE DATABASE ${database} DEFAULT CHARSET = ${charset} COLLATE = ${collate};\"",
   unless  => "mysql -u root -p'${r_pass}' -e \"SHOW DATABASES;\" | grep ${database}",
-  require => [Package['mysql-community-server'], Exec['install_pass']],
+  require => [Package['mysql-community-server'], Exec['set_root_pwd']],
 }
 }
 
