@@ -7,7 +7,7 @@ class profile::mysqlserver::replication (
   $port                = ['3306'], # can also be defined under my.cnf
   $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
   $replica_user        = "replication", # For master, what is the replication account
-  $replica_passwor     = "Pr0m3Teus!", # Replication User password
+  $replica_password    = "Pr0m3Teus!", # Replication User password
   $is_slave            = true,  # True if the node is slave
   $master_ip           = "192.168.56.150",     # The IP Address of the master in case this is a slave
   $master_port         = "3306", # The port where the master is listening to
