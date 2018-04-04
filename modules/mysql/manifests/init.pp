@@ -11,6 +11,7 @@ class mysql (
 	$mysql_distro        = "community",
 	$mysql_version       = "5.7",
 	$mysql_serverid      = undef,
+  $bind_address        = "0.0.0.0"
 #	$ensure              = "running",
 )
 

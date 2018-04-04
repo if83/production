@@ -12,7 +12,7 @@ class profile::mysqlserver::master (
 
 )
 {
-include mysql
+
 include firewall
 
 firewall::openport {'mysqlmaster':
@@ -24,6 +24,7 @@ class { 'mysql':
   mysql_distro        => $mysql_distro,
   mysql_version       => $mysql_version,
   mysql_serverid      => $mysql_serverid,
+  bind_address        => $bind_address
 }
 
 if $is_master {
