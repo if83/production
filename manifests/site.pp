@@ -1,7 +1,5 @@
 ## site.pp ##
 
-
-
 # Disable filebucket by default for all File resources:
 File { backup => false }
 
@@ -23,39 +21,12 @@ node default {
 # here is the line 23
 
 
-node 'jenkins.local' {
+node 'jenkins.if083' {
   include role::jenkins::master
 }
 
-node 'sonar' {
-
-  $sonar = {
-    log_name => '/usr/local/sonar/logs/*.log',
-    app_name => 'sonar',
-    severity => 'info',
-  }
-  $apps = [$sonar]
-
-  rsyslog::client { 'app' :
-    log_proto => 'tcp',
-    log_port  => '601',
-    log_serv  => '192.168.56.10',
-    apps      => $apps,
-  }
-
-  class { 'java8':
-    java_se       => 'jdk',
-  }
-
-  class { 'postgres':
-    user_host     => 'localhost',
-  }
-
-  class { 'sonarqube':
-    db_provider => 'psql',
-    db_host     => 'localhost',
-  }
-
+node 'sonar.if083' {
+ include role::sonarqube
 }
 
 node 'zabbix' {

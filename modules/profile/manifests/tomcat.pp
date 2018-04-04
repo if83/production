@@ -1,11 +1,25 @@
 class profile::tomcat (  
-    $dports         = ['80', '8080', '8080'],
+    $dports         = ['80', '8080'],
     $ssh_user       = 'if083',
     $ssh_group      = 'wheel',
     $ssh_password   = 'derferterela',
 ) {
 
-  include java8
+  $tomcat = {
+    log_name => '/var/log/tomcat/*.log',
+    app_name => 'tomcat',
+    severity => 'info',
+  }
+  $httpd = {
+    log_name => '/var/log/httpd/*.log',
+    app_name => 'httpd',
+    severity => 'info',
+  }
+  $apps   = [$tomcat, $httpd]
+
+  class { 'java8':
+    java_se      => $java_mode,
+  }
   include tomcat
   include firewall
 
@@ -17,6 +31,14 @@ class profile::tomcat (
   firewall::openport {'tomcat':
     dports          => $dports,
   }
+  
+  rsyslog::client { 'app' :
+    log_proto    => $log_proto,
+    log_port     => $log_port,
+    log_serv     => $log_serv,
+    apps         => $apps,
+  }
+
 
   exec { 'setenforce':
     command         => "setenforce 0",

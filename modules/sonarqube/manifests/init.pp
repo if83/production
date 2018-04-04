@@ -35,7 +35,7 @@ class sonarqube (
   $package_name   = 'sonarqube'
   $zipname        = "${package_name}-${version}.zip"
   $ziproute       = "${source_dir}/${zipname}"
-  $installdir = "${inst_root}/${service}"
+  $installdir     = "${inst_root}/${service}"
   # $extensions_dir = "${user_home}/extensions"
   # $plugin_dir = "${extensions_dir}/plugins"
 
@@ -160,24 +160,24 @@ class sonarqube (
     enable     => true,
     # require    => File["/etc/init.d/${service}"],
   }
-
-  ->
-  exec { 'firewall-cmd':
-    command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
-    notify  => Exec['firewall-reload'],
-  }
-
-  ->
-  exec { 'firewall-reload':
-    command => "firewall-cmd --reload",
-    notify  => Service['firewalld'],
-  }
-
-  ->
-  service { 'firewalld':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
-  }
+  ##### Uncomment this block when not using common firewall module #####
+  # if $dport != undef {
+  #   exec { 'firewall-cmd':
+  #     command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
+  #     notify  => Exec['firewall-reload'],
+  #   }
+  #   ->
+  #   exec { 'firewall-reload':
+  #     command => "firewall-cmd --reload",
+  #     notify  => Service['firewalld'],
+  #   }
+  #   ->
+  #   service { 'firewalld':
+  #     ensure     => running,
+  #     enable     => true,
+  #     hasrestart => true,
+  #   }    
+  # }
+  
 }
 

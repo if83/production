@@ -26,16 +26,17 @@ module(load="imtcp")
 # *.* :ommysql:<%= @db_host %>,<%= @db_name %>,<%= @db_user %>,<%= @db_pass %>
 <% elsif @hosttype['client'] -%>
 
-template (name="LongTagForwardFormat" type="string"
+template (name="SuffixForwardFormat" type="string"
 string="<%%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%$.suffix%%msg:::sp-if-no-1st-sp%%msg%")
 
 ruleset(name="sendToLogserver") {
-    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="LongTagForwardFormat")
+
+    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat" resendlastmsgonreconnect="on" resumeRetryCount="-1" queue.filename="forwarding" queue.size="1000000" queue.type="LinkedList" queue.saveonshutdown="on")
 }
 
 ruleset(name="myapp_logs") {
     # re_extract(expr, re, match, submatch, no-found)
-    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "all.log"), ".log", "");
+    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "common.log"), ".log", "");
     call sendToLogserver
 }
 
@@ -86,12 +87,11 @@ string="/var/log/remote/%HOSTNAME%/%PROGRAMNAME:::secpath-replace%.log"
 ruleset(name="RemoteApps"){
 #     authpriv.*   action(type="omfile" DynaFile="TmplAuthpriv")
 #      *.info;mail.none;authpriv.none;cron.none action(type="omfile" DynaFile="TmplMsg")
-      *.* action(type="omfile" DynaFile="TmplMsg")
+    *.* action(type="omfile" DynaFile="TmplMsg")
 }
 
 <% if @log_proto['tcp'] -%>
 input(type="imtcp" port="<%= @dport %>" ruleset="RemoteApps")
-#input(type="imtcp" port="10514" ruleset="Remote")
 
 <% elsif @log_proto['udp'] -%>
 input(type="imudp" port="<%= @dport %>" ruleset="RemoteApps")
@@ -113,7 +113,7 @@ input(type="imudp" port="<%= @dport %>" ruleset="RemoteApps")
 authpriv.*                                              /var/log/secure
 
 # Log all the mail messages in one place.
-mail.*                                                  -/var/log/maillog
+mail.*                                                  /var/log/maillog
 
 
 # Log cron stuff
