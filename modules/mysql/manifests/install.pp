@@ -8,7 +8,7 @@
 #   include mysql::install
 class mysql::install {
 
- case $::osfamily {
+  case $::osfamily {
     'RedHat':  {
  	$releasever = "7"
  	$basearch   = $hardwaremodel
@@ -25,7 +25,7 @@ yumrepo { "mysql-repo":
   enabled     => 1,
   baseurl     => $repo_url,
   gpgcheck    => 0,
-    }
+}
 
 package { 'mysql-community-server':
   ensure  => present,

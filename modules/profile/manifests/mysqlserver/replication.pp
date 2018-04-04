@@ -1,7 +1,7 @@
-class profile::mysqlserver::replication (
-  $mysql_root_password = "a8+?treAvpDa",
-  $mysql_distro        = "community",
-  $mysql_version       = "5.7",
+class profile::mysqlserver::replication {
+  $mysql_root_password = "a8+?treAvpDa", # My root password
+  $mysql_distro        = "community", # Distributive name. For now community only 
+  $mysql_version       = "5.7", # Provide the Mysql Version. You can set 5.7 or 5.6
   $mysql_serverid      = "2", # Provide the Server ID = 1.2.3.... etc
   $datadir             = "/var/lib/mysql", # can also be defined under my.cnf
   $port                = ['3306'], # can also be defined under my.cnf
@@ -9,13 +9,10 @@ class profile::mysqlserver::replication (
   $replica_user        = "replication", # For master, what is the replication account
   $replica_password    = "Pr0m3Teus!", # Replication User password
   $is_slave            = true,  # True if the node is slave
-  $master_ip           = "192.168.56.150",     # The IP Address of the master in case this is a slave
+  $master_ip           = "192.168.56.150", # The IP Address of the master in case this is a slave
   $master_port         = "3306", # The port where the master is listening to
 
-)
-{ 
 include stdlib
-include firewall
 
 firewall::openport {'mysqlslave':
     dports => $port,
@@ -25,7 +22,7 @@ class { 'mysql':
   mysql_root_password => $mysql_root_password,
   mysql_distro        => $mysql_distro,
   mysql_version       => $mysql_version,
-  mysql_serverid      => $mysql_serverid,
+  mysql_serverid      => $mysql_serverid,s
   bind_address        => $bind_address,
 }
   if $is_slave {
