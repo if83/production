@@ -4,9 +4,6 @@ class profile::sonarqube {
   $ssh_group     = 'wheel'
   $ssh_password  = 'derferterela'
   $dports        = ['9000','5432']
-  $log_proto     = 'tcp'
-  $log_port      = '601'
-  $log_serv      = '192.168.56.10'
   $user_host     = 'localhost'
   $java_mode     = 'jdk'
   $db_provider   = 'psql'
@@ -14,12 +11,6 @@ class profile::sonarqube {
   $db_host       = 'localhost'
   $sonar_version = '6.7.2'
 
-  $sonar = {
-    log_name => '/usr/local/sonar/logs/*.log',
-    app_name => 'sonar',
-    severity => 'info',
-  }
-  $apps   = [$sonar]
 
   base::ssh_user { $ssh_user:
     ssh_user     => $ssh_user,
@@ -28,12 +19,6 @@ class profile::sonarqube {
   }
   firewall::openport {'sonar':
     dports       => $dports,
-  }
-  rsyslog::client { 'app' :
-    log_proto    => $log_proto,
-    log_port     => $log_port,
-    log_serv     => $log_serv,
-    apps         => $apps,
   }
 
   class { 'postgres':

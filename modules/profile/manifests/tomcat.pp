@@ -5,21 +5,7 @@ class profile::tomcat (
     $ssh_password   = 'derferterela',
 ) {
 
-  $tomcat = {
-    log_name => '/var/log/tomcat/*.log',
-    app_name => 'tomcat',
-    severity => 'info',
-  }
-  $httpd = {
-    log_name => '/var/log/httpd/*.log',
-    app_name => 'httpd',
-    severity => 'info',
-  }
-  $apps   = [$tomcat, $httpd]
-
-  class { 'java8':
-    java_se      => $java_mode,
-  }
+  include java8
   include tomcat
   include firewall
 
@@ -31,14 +17,6 @@ class profile::tomcat (
   firewall::openport {'tomcat':
     dports          => $dports,
   }
-  
-  rsyslog::client { 'app' :
-    log_proto    => $log_proto,
-    log_port     => $log_port,
-    log_serv     => $log_serv,
-    apps         => $apps,
-  }
-
 
   exec { 'setenforce':
     command         => "setenforce 0",
