@@ -14,7 +14,7 @@ class mysql::configure
   $path_file = $facts['os']['family'] ? {
     'RedHat' => '/etc/my.cnf',
 }
-$serverid = $mysql::$mysql_serverid
+$serverid = $mysql::mysql_serverid
 $bind     = $mysql::bind_address
 file { $conf_name:
   ensure  => present,

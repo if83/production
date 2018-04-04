@@ -3,6 +3,7 @@ class profile::mysqlserver::replication (
   $mysql_distro        = "community",
   $mysql_version       = "5.7",
   $mysql_serverid      = "2", # Provide the Server ID = 1.2.3.... etc
+  $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
   $datadir             = "/var/lib/mysql", # can also be defined under my.cnf
   $port                = ['3306'], # can also be defined under my.cnf
 # $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
@@ -15,7 +16,6 @@ class profile::mysqlserver::replication (
 )
 { 
 include stdlib
-include mysql
 include firewall
 
 firewall::openport {'mysqlslave':
@@ -27,6 +27,7 @@ class { 'mysql':
   mysql_distro        => $mysql_distro,
   mysql_version       => $mysql_version,
   mysql_serverid      => $mysql_serverid,
+  bind_address        => $bind_address,
 }
   if $is_slave {
     validate_ip_address($master_ip)  # IP Address must be set to identify the master
