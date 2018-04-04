@@ -3,10 +3,9 @@ class profile::mysqlserver::replication (
   $mysql_distro        = "community",
   $mysql_version       = "5.7",
   $mysql_serverid      = "2", # Provide the Server ID = 1.2.3.... etc
-  $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
   $datadir             = "/var/lib/mysql", # can also be defined under my.cnf
   $port                = ['3306'], # can also be defined under my.cnf
-# $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
+  $bind_address        = "0.0.0.0",  # can also be defined under my.cnf
   $replica_user        = "replication", # For master, what is the replication account
   $replica_passwor     = "Pr0m3Teus!", # Replication User password
   $is_slave            = true,  # True if the node is slave
