@@ -45,7 +45,7 @@
 # SELinux allows port 601 for syslogd-port_t tcp/udp proto ; port 514 for udp 
 #                    & port 6514 tcp/udp proto  for syslog_tls-port_t
 #
-define rsyslog::server (
+class rsyslog::server (
 
   $log_proto   = 'tcp',
   $log_port    = '601',
@@ -55,11 +55,6 @@ define rsyslog::server (
   $hosttype    = 'server'
   $log_serv    = 'localhost'
 # the <log_serv> value can be defined as an IP address either as a domain name
-
-  Exec {
-    path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
-    user => 'root',
-  }
 
   case $::osfamily {
     'RedHat': {
@@ -89,21 +84,5 @@ define rsyslog::server (
   service { 'rsyslog':
     ensure      => running,
     enable      => true,
-  }
-
-  exec { 'firewall-port':
-    command     => "firewall-cmd --zone=public --add-port=${dport}/${log_proto} --permanent",
-    notify      => Exec['firewall_reload'],
-  }
-  ->
-  exec { 'firewall_reload':
-    command     => 'firewall-cmd --reload',
-    notify      => Service['firewalld'],
-  }
-  ->
-  service { 'firewalld':
-    ensure     => running,
-    enable     => true,
-    hasrestart => true,
   }
 }

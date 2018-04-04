@@ -56,6 +56,5 @@ node /^web/ {
 }
 
 node 'rsyslog' {
-  rsyslog::server { 'app' :
-  }
+  include role::rsyslog
 }
