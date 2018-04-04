@@ -71,11 +71,9 @@ node 'balancer' {
 }
 
 node 'db.if083' {
-  $serverid="1"
   include role::master
 }
 node 'dbslave.if083' {
-  $serverid="2"
   include role::slave
 }
 
