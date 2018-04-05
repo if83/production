@@ -8,17 +8,12 @@
 #   include mysql::configure
 class mysql::configure
 {
-  $conf_name = $facts['os']['family'] ? {
-    'RedHat' => 'mysql-redhat.cnf.erb',
-}
-  $path_file = $facts['os']['family'] ? {
-    'RedHat' => '/etc/my.cnf',
-}
-$serverid = $mysql::mysql_serverid
-$bind     = $mysql::bind_address
+  $conf_name = 'mysql-redhat.cnf.erb'
+  $serverid  = $mysql::mysql_serverid
+  $bind      = $mysql::bind_address
 file { $conf_name:
   ensure  => present,
-  path    => $path_file,
+  path    => '/etc/my.cnf',
   owner   => 'root',
   group   => 'root',
   mode    => '0644',

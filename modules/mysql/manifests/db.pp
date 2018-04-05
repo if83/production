@@ -8,8 +8,8 @@
 #   mysql::db { 'namevar': }
 define mysql::db(
   String $database,
-  String $charset,
-  String $collate, 
+  $charset = 'utf8',
+  $collate = 'utf8_unicode_ci', 
 )
 {
 include mysql

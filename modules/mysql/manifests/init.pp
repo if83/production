@@ -12,17 +12,8 @@ class mysql (
 	$mysql_version       = "5.7",
 	$mysql_serverid      = undef,
   $bind_address        = "0.0.0.0"
-#	$ensure              = "running",
 )
-
 {
-  if $mysql::mysql_version == "5.7" {
-    $mysql_ver="57"
-  }
-    elsif $mysql::mysql_version == "5.6" {
-    $mysql_ver="56"
-  }    
- 
   include mysql::install
   include mysql::configure
   include mysql::service

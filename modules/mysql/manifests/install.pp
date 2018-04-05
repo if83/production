@@ -8,6 +8,14 @@
 #   include mysql::install
 class mysql::install {
 
+  {
+  if $mysql::mysql_version == "5.7" {
+    $mysql_ver="57"
+  }
+    elsif $mysql::mysql_version == "5.6" {
+    $mysql_ver="56"
+  } 
+
   case $::osfamily {
     'RedHat':  {
  	$releasever = "7"
