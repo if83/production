@@ -34,8 +34,6 @@ yumrepo { 'mysql-repo':
 
 class { 'mysql':
   mysql_root_password => $mysql_root_password,
-  mysql_distro        => $mysql_distro,
-  mysql_version       => $mysql_version,
   mysql_serverid      => $mysql_serverid,
   bind_address        => $bind_address,
 }
