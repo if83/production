@@ -1,10 +1,11 @@
 ## when this resource have been called, 
 ## it's required to define list of hashes <apps>
-## which is reliable for collection of app logs
+## which is reliable for gathering of app logs
 ##  appnamei = {
-##    $log_name => 'logname'
-##    $app_name => 'appname'
-##    $severity => 'severity'
+##    $log_name => 'logname',  path to log file
+##    $log_tag  => 'tag',      also uses as prefix for logname
+##    $app_name => 'appname',  uses as name forconfig file
+##    $severity => 'severity',
 ##  }
 ##  apps = [$appname1, $appname2, ... $appnamen]
 ##
@@ -15,23 +16,21 @@ define rsyslog::client (
 
   $log_proto = 'tcp',
   $log_port  = '601',
-  $log_serv  = undef,
-  $apps      = undef,
+  $log_serv  = '192.168.56.10',
+  $user_apps = [],
 ){
 # the <log_serv> value can be defined as an IP address either as a domain name
   $db_host   = 'localhost'
   $db_name   = 'syslog'
   $db_user   = 'rsyslog'
   $db_pass   = 'rsyslog'
-# variables above are intended for proper work of .conf template
+# variables below are intended for proper work of .conf template
   $dport     = $log_port
   $hosttype  = 'client'
-
-  Exec {
-    path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',
-    user => 'root',
-  }
-
+  $apps = [ {log_name => '/var/log/secure', log_tag  => 'sys_', app_name => 'secure', severity => 'info'},
+          {log_name => '/var/log/messages', log_tag  => 'sys_', app_name => 'messages', severity => 'info',}
+          ]
+  
   case $::osfamily {
     'RedHat': {
       case $::operatingsystem {
@@ -49,6 +48,28 @@ define rsyslog::client (
     default: { fail("unsupported platform ${::osfamily}") }
   }
 
+  $apps.each |$app| {
+    $filename = $app[app_name]
+    file { "/etc/rsyslog.d/${filename}.conf":
+      ensure  => file,
+      mode    => '0644',
+      owner   => 'root',
+      content => template('rsyslog/appslog.conf.erb'),
+      notify  => Service['rsyslog'],
+    }
+  }
+
+  $user_apps.each |$app| {
+    $u_name = $app[app_name]
+    file { "/etc/rsyslog.d/${u_name}.conf":
+      ensure  => file,
+      mode    => '0644',
+      owner   => 'root',
+      content => template('rsyslog/appslog.conf.erb'),
+      notify  => Service['rsyslog'],
+    }
+  }
+
   file { '/etc/rsyslog.conf':
     ensure  => file,
     mode    => '0644',
@@ -60,20 +81,5 @@ define rsyslog::client (
   service { 'rsyslog':
     ensure      => running,
     enable      => true,
-    #hasrestart => true,
-    #hasstatus  => true,
-    #require    => Class["config"],
   }
-
 }
-
-# add to rsyslog.conf 
-# local1.* @Apache_IP_address:514
-
-# in Apache config
-# vi /etc/httpd/conf/httpd.conf
-# add the line below for sending access lods
-# CustomLog "| /bin/sh -c '/usr/bin/tee -a /var/log/httpd/httpd-access.log | /usr/bin/logger -thttpd -plocal1.notice'" combined
-# add the line below for sending Apache error logs
-# ErrorLog "|/bin/sh -c '/usr/bin/tee -a /var/log/httpd/httpd-error.log | /usr/bin/logger -thttpd -plocal1.err'"
-# (where local1 ==> facility alias/nickname of apache server)

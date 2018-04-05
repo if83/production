@@ -11,12 +11,24 @@ class profile::sonarqube {
   $db_host       = 'localhost'
   $sonar_version = '6.7.2'
 
+  $log_sonar     = {
+    log_name => '/usr/local/sonar/logs/*.log',
+    log_tag  => 'sonar_',
+    app_name => 'sonar',
+    severity => 'info',
+  }
+  $apps   = [$log_sonar]
+
+  rsyslog::client { 'app' :
+    user_apps    => $apps,
+  }
 
   base::ssh_user { $ssh_user:
     ssh_user     => $ssh_user,
     ssh_group    => $ssh_group,
     ssh_password => $ssh_password,
   }
+
   firewall::openport {'sonar':
     dports       => $dports,
   }

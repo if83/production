@@ -5,6 +5,10 @@
 
 #### MODULES ####
 
+<% if @hosttype['client'] -%>
+module(load="imfile" Mode="inotify")
+<% end -%>
+
 # The imjournal module below is now used as a message source instead of imuxsock.
 $ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
 $ModLoad imjournal # provides access to the systemd journal
@@ -24,37 +28,7 @@ module(load="imtcp")
 # provides mysql db connectiom
 # $ModLoad ommysql
 # *.* :ommysql:<%= @db_host %>,<%= @db_name %>,<%= @db_user %>,<%= @db_pass %>
-<% elsif @hosttype['client'] -%>
-
-template (name="SuffixForwardFormat" type="string"
-string="<%%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%$.suffix%%msg:::sp-if-no-1st-sp%%msg%")
-
-ruleset(name="sendToLogserver") {
-
-    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat" resendlastmsgonreconnect="on" resumeRetryCount="-1" queue.filename="forwarding" queue.size="1000000" queue.type="LinkedList" queue.saveonshutdown="on")
-}
-
-ruleset(name="myapp_logs") {
-    # re_extract(expr, re, match, submatch, no-found)
-    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "common.log"), ".log", "");
-    call sendToLogserver
-}
-
-module(load="imfile" Mode="inotify")
-<% @apps.each do |app| -%>
-input(type="imfile" 
-    File="<%= app['log_name'] %>" 
-    Tag="<%= app['app_name'] %>" 
-    Severity="<%= app['severity'] %>"
-    Facility="local7"
-    PersistStateInterval="5"
-    Ruleset="myapp_logs"
-    addMetadata="on"
-)
-
 <% end -%>
-<% end -%>
-
 
 #### GLOBAL DIRECTIVES ####
 
@@ -79,25 +53,33 @@ $OmitLocalLogging on
 $IMJournalStateFile imjournal.state
 
 <% if @hosttype['server'] -%>
-
 template(name="TmplMsg" type="string"
 string="/var/log/remote/%HOSTNAME%/%PROGRAMNAME:::secpath-replace%.log"
 )
 
 ruleset(name="RemoteApps"){
-#     authpriv.*   action(type="omfile" DynaFile="TmplAuthpriv")
-#      *.info;mail.none;authpriv.none;cron.none action(type="omfile" DynaFile="TmplMsg")
     *.* action(type="omfile" DynaFile="TmplMsg")
 }
 
 <% if @log_proto['tcp'] -%>
 input(type="imtcp" port="<%= @dport %>" ruleset="RemoteApps")
-
 <% elsif @log_proto['udp'] -%>
 input(type="imudp" port="<%= @dport %>" ruleset="RemoteApps")
 <% end -%>
-<% end -%>
+<% elsif @hosttype['client'] -%>
+template (name="SuffixForwardFormat" type="string"
+string="<%%PRI%>%TIMESTAMP% %HOSTNAME% %syslogtag%%$.suffix%%msg:::sp-if-no-1st-sp%%msg%")
 
+ruleset(name="sendToLogserver") {
+    action(type="omfwd" Target="<%= @log_serv %>" Port="<%= @dport %>" Protocol="<%= @log_proto %>" Template="SuffixForwardFormat" resendlastmsgonreconnect="on" queue.filename="forwarding" queue.size="1000000" queue.type="LinkedList" queue.saveonshutdown="on")
+}
+
+ruleset(name="myapp_logs") {
+    # re_extract(expr, re, match, submatch, no-found)
+    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "common.log"), ".log", "");
+    call sendToLogserver
+}
+<% end -%>
 
 #### RULES ####
 
@@ -115,7 +97,6 @@ authpriv.*                                              /var/log/secure
 # Log all the mail messages in one place.
 mail.*                                                  /var/log/maillog
 
-
 # Log cron stuff
 cron.*                                                  /var/log/cron
 
@@ -128,7 +109,7 @@ uucp,news.crit                                          /var/log/spooler
 # Save boot messages also to boot.log
 local7.*                                                /var/log/boot.log
 
-
+<% if @hosttype['client'] -%>
 # ### begin forwarding rule ###
 # The statement between the begin ... end define a SINGLE forwarding
 # rule. They belong together, do NOT split them. If you create multiple
@@ -137,7 +118,6 @@ local7.*                                                /var/log/boot.log
 #
 # An on-disk queue is created for this action. If the remote host is
 # down, messages are spooled to disk and sent when it is up again.
-<% if @hosttype['client'] -%>
 <% if @log_proto['tcp'] -%>
 $ActionQueueFileName fwdRule1     # unique name prefix for spool files
 $ActionQueueMaxDiskSpace 1g       # 1gb space limit (use as much as possible)
@@ -148,14 +128,5 @@ $ActionResumeRetryCount -1        # infinite retries if host is down
 # remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
 *.* <% if @log_proto['tcp'] -%>@<% end -%>@<%= @log_serv %>:<%= @dport %>
 
-<% if @log_proto['tcp'] -%>
-$ActionQueueFileName fwdRule2     # unique name prefix for spool files
-$ActionQueueMaxDiskSpace 1g       # 1gb space limit (use as much as possible)
-$ActionQueueSaveOnShutdown on     # save messages to disk on shutdown
-$ActionQueueType LinkedList       # run asynchronously
-$ActionResumeRetryCount -1        # infinite retries if host is down
-<% end -%>
-local7.* <% if @log_proto['tcp'] -%>@<% end -%>@<%= @log_serv %>:<%= @dport %>
-<% end -%>
-
 # ### end of the forwarding rule ###
+<% end -%>
