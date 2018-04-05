@@ -22,6 +22,10 @@ class { 'mysql':
   bind_address        => $bind_address,
 }
 
+yumrepo { "mysql-repo":
+  enabled     => 1,
+}
+
 if $is_master {
     mysql::users { '${replica_user}': 
       table     => '*', # GRANT ALL ON ${table}.*

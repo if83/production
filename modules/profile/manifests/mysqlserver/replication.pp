@@ -25,6 +25,11 @@ class { 'mysql':
   mysql_serverid      => $mysql_serverid,
   bind_address        => $bind_address,
 }
+
+yumrepo { "mysql-repo":
+  enabled     => 1,
+}
+
   if $is_slave {
     validate_ip_address($master_ip)  # IP Address must be set to identify the master
     $cmd_change_master = join(["CHANGE MASTER TO MASTER_HOST","\'${master_ip}\',MASTER_PORT","${master_port},MASTER_USER","\'${replica_user}\',MASTER_PASSWORD","\'${replica_password}\';"], "=") 
