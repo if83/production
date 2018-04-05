@@ -7,9 +7,8 @@
 # @example
 #   include mysql::service
 class mysql::service {
-  $conf_name = $facts['os']['family'] ? {
-    'RedHat' => 'mysql-redhat.cnf.erb',
-}
+  $conf_name = 'mysql-redhat.cnf.erb'
+
 service { 'mysql':
   ensure     => running,
   name       => 'mysqld',

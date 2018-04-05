@@ -8,8 +8,8 @@
 #   include mysql::rootpass
 class mysql::rootpass {
 
-$root_pass     = $mysql::mysql_root_password
-$old_root_pass = "\$(grep 'temporary password' /var/log/mysqld.log| awk '{print \$11}')"
+  $root_pass     = $mysql::mysql_root_password
+  $old_root_pass = "\$(grep 'temporary password' /var/log/mysqld.log| awk '{print \$11}')"
 
 if $root_pass == undef {
    $root_pwd = $old_root_password   

@@ -11,12 +11,26 @@ class profile::mysqlserver::replication {
   $is_slave            = true  # True if the node is slave
   $master_ip           = "192.168.56.150" # The IP Address of the master in case this is a slave
   $master_port         = "3306" # The port where the master is listening to
+  $repo_url            = "http://repo.mysql.com/yum/mysql-${mysql_version}-community/el/7/x86_64/"
+  $repo_descr          = "MySQL $mysql_version Community Server"
 
 include stdlib
 
 firewall::openport {'mysqlslave':
-    dports => $port,
-  }
+  dports => $port,
+}
+
+package { 'yum':
+  ensure => present,
+}
+
+yumrepo { 'mysql-repo':
+  descr       => $repo_descr,
+  enabled     => 1,
+  baseurl     => $repo_url,
+  gpgcheck    => 0,
+  require     => Package['yum'],
+}
 
 class { 'mysql':
   mysql_root_password => $mysql_root_password,
@@ -24,15 +38,6 @@ class { 'mysql':
   mysql_version       => $mysql_version,
   mysql_serverid      => $mysql_serverid,
   bind_address        => $bind_address,
-}
-
-$repo_descr = $mysql::install::repo_descr
-$repo_url = $mysql::install::repo_url
-yumrepo { "mysql-repo":
-  descr       => $repo_descr,
-  enabled     => 1,
-  baseurl     => $repo_url,
-  gpgcheck    => 0,
 }
 
   if $is_slave {

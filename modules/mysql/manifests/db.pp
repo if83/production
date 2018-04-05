@@ -13,7 +13,7 @@ define mysql::db(
 )
 {
 include mysql
-$r_pass = $mysql::mysql_root_password
+  $r_pass = $mysql::mysql_root_password
 Exec {
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
 }
