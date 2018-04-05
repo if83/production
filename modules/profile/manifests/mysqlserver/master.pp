@@ -22,8 +22,13 @@ class { 'mysql':
   bind_address        => $bind_address,
 }
 
+$repo_descr = $mysql::install::repo_descr
+$repo_url = $mysql::install::repo_url
 yumrepo { "mysql-repo":
+  descr       => $repo_descr,
   enabled     => 1,
+  baseurl     => $repo_url,
+  gpgcheck    => 0,
 }
 
 if $is_master {

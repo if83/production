@@ -8,7 +8,7 @@
 #   include mysql::install
 class mysql::install {
 
-  {
+  
   if $mysql::mysql_version == "5.7" {
     $mysql_ver="57"
   }
@@ -26,13 +26,6 @@ class mysql::install {
     $repo_url   = "http://repo.mysql.com/yum/mysql-${mysql::mysql_version}-community/el/$releasever/$basearch/"
  	}
 }
-}
-
-yumrepo { "mysql-repo":
-  descr       => $repo_descr,
-  enabled     => 1,
-  baseurl     => $repo_url,
-  gpgcheck    => 0,
 }
 
 package { 'mysql-community-server':
