@@ -1,0 +1,11 @@
+#### SINGLE TASK CONF ####
+
+input(type="imfile" 
+    File="<%= @app['log_name'] %>" 
+    Tag="<%= @app['log_tag'] %>" 
+    Severity="<%= @app['severity'] %>"
+    Facility="local7"
+    PersistStateInterval="5"
+    Ruleset="myapp_logs"
+    addMetadata="on"
+)
