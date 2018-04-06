@@ -16,7 +16,7 @@ define rsyslog::client (
 
   $log_proto = 'tcp',
   $log_port  = '601',
-  $log_serv  = '192.168.56.10',
+  $log_serv  = '192.168.56.15',
   $user_apps = [],
 ){
 # the <log_serv> value can be defined as an IP address either as a domain name

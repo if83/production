@@ -16,7 +16,7 @@ class rsyslog (
 
   $log_proto = 'tcp',
   $log_port  = '514',
-  $log_serv  = '192.168.56.10',
+  $log_serv  = '192.168.56.15',
 ){
 
 }
