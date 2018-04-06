@@ -15,7 +15,7 @@ class profile::sonarqube {
     log_name => '/usr/local/sonar/logs/*.log',
     log_tag  => 'sonar_',
     app_name => 'sonar',
-    severity => 'info',}],
+    severity => 'info',
   }
 
   firewall::openport {'sonar':
