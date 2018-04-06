@@ -1,24 +1,36 @@
-class profile::mysqlserver::replication (
-# $serverid = "2", # Provide the Server ID = 1.2.3.... etc
-  $datadir                = "/var/lib/mysql", # can also be defined under my.cnf
-  $port                   = ['3306'], # can also be defined under my.cnf
-# $bind_address           = "0.0.0.0",  # can also be defined under my.cnf
-  $replica_user           = "replication", # For master, what is the replication account
-  $replica_password       = "Pr0m3Teus!", # Replication User password
-# $replica_password_hash  = '*D36660B5249B066D7AC5A1A14CECB71D36944CBC', # the same replication account password hashed
-  $is_slave               = true,  # True if the node is slave
-  $master_ip              = "192.168.56.150",     # The IP Address of the master in case this is a slave
-  $master_port            = "3306", # The port where the master is listening to
+class profile::mysqlserver::replication {
+  $mysql_root_password = "a8+?treAvpDa" # My root password
+  $mysql_version       = "5.7" # Provide the Mysql Version. You can set 5.7 or 5.6
+  $mysql_serverid      = "2" # Provide the Server ID = 1.2.3.... etc
+  $datadir             = "/var/lib/mysql" # can also be defined under my.cnf
+  $port                = ['3306'] # can also be defined under my.cnf
+  $bind_address        = "0.0.0.0"  # can also be defined under my.cnf
+  $replica_user        = "replication" # For master, what is the replication account
+  $replica_password    = "Pr0m3Teus!" # Replication User password
+  $is_slave            = true  # True if the node is slave
+  $master_ip           = "192.168.56.150" # The IP Address of the master in case this is a slave
+  $master_port         = "3306" # The port where the master is listening to
+  $repo_url            = "http://repo.mysql.com/yum/mysql-${mysql_version}-community/el/7/x86_64/"
+  $repo_descr          = "MySQL $mysql_version Community Server"
 
-)
-{ 
 include stdlib
-include mysql
-include firewall
 
 firewall::openport {'mysqlslave':
-    dports => $port,
-  }
+  dports => $port,
+}
+
+yumrepo { 'mysql-repo':
+  descr    => $repo_descr,
+  enabled  => 1,
+  baseurl  => $repo_url,
+  gpgcheck => 0,
+}
+
+class { 'mysql':
+  mysql_root_password => $mysql_root_password,
+  mysql_serverid      => $mysql_serverid,
+  bind_address        => $bind_address,
+}
 
   if $is_slave {
     validate_ip_address($master_ip)  # IP Address must be set to identify the master

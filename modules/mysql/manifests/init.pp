@@ -6,7 +6,12 @@
 #
 # @example
 #   include mysql
-class mysql {
+class mysql (
+  $mysql_root_password = undef,
+  $mysql_serverid      = undef,
+  $bind_address        = "0.0.0.0"
+)
+{
   include mysql::install
   include mysql::configure
   include mysql::service
