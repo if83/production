@@ -1,6 +1,5 @@
 class profile::mysqlserver::replication {
   $mysql_root_password = "a8+?treAvpDa" # My root password
-  $mysql_distro        = "community" # Distributive name. For now community only 
   $mysql_version       = "5.7" # Provide the Mysql Version. You can set 5.7 or 5.6
   $mysql_serverid      = "2" # Provide the Server ID = 1.2.3.... etc
   $datadir             = "/var/lib/mysql" # can also be defined under my.cnf
@@ -20,16 +19,11 @@ firewall::openport {'mysqlslave':
   dports => $port,
 }
 
-package { 'yum':
-  ensure => present,
-}
-
 yumrepo { 'mysql-repo':
-  descr       => $repo_descr,
-  enabled     => 1,
-  baseurl     => $repo_url,
-  gpgcheck    => 0,
-  require     => Package['yum'],
+  descr    => $repo_descr,
+  enabled  => 1,
+  baseurl  => $repo_url,
+  gpgcheck => 0,
 }
 
 class { 'mysql':

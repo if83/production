@@ -14,16 +14,11 @@ firewall::openport {'mysqlmaster':
   dports => $port,
 }
 
-package { 'yum':
-  ensure => present,
-}
-
 yumrepo { 'mysql-repo':
-  descr       => $repo_descr,
-  enabled     => 1,
-  baseurl     => $repo_url,
-  gpgcheck    => 0,
-  require     => Package['yum'],
+  descr    => $repo_descr,
+  enabled  => 1,
+  baseurl  => $repo_url,
+  gpgcheck => 0,
 }
 
 class { 'mysql':
