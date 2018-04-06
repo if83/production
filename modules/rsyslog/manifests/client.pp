@@ -46,7 +46,7 @@ define rsyslog::client (
     default: { fail("unsupported platform ${::osfamily}") }
   }
 
-   $apps.each |$app| {
+  $apps.each |$app| {
     $filename = $app[app_name]
     file { "/etc/rsyslog.d/${filename}.conf":
       ensure  => file,
