@@ -17,7 +17,7 @@ define rsyslog::client (
   $log_proto = 'tcp',
   $log_port  = '601',
   $log_serv  = '192.168.56.15',
-  $user_apps = [],
+  $apps      = [],
 ){
 # the <log_serv> value can be defined as an IP address either as a domain name
   $db_host   = 'localhost'
@@ -27,9 +27,7 @@ define rsyslog::client (
 # variables below are intended for proper work of .conf template
   $dport     = $log_port
   $hosttype  = 'client'
-  $apps = [ {log_name => '/var/log/secure', log_tag  => 'sys_', app_name => 'secure', severity => 'info'},
-          {log_name => '/var/log/messages', log_tag  => 'sys_', app_name => 'messages', severity => 'info',}
-          ]
+
   
   case $::osfamily {
     'RedHat': {
@@ -48,20 +46,9 @@ define rsyslog::client (
     default: { fail("unsupported platform ${::osfamily}") }
   }
 
-  $apps.each |$app| {
+   $apps.each |$app| {
     $filename = $app[app_name]
     file { "/etc/rsyslog.d/${filename}.conf":
-      ensure  => file,
-      mode    => '0644',
-      owner   => 'root',
-      content => template('rsyslog/appslog.conf.erb'),
-      notify  => Service['rsyslog'],
-    }
-  }
-
-  $user_apps.each |$app| {
-    $u_name = $app[app_name]
-    file { "/etc/rsyslog.d/${u_name}.conf":
       ensure  => file,
       mode    => '0644',
       owner   => 'root',

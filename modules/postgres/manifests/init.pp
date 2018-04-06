@@ -55,7 +55,7 @@ class postgres (
   exec { 'initdb':
     command  => "/usr/pgsql-${version}/bin/postgresql${short_vers}-setup initdb",
     creates  => "/var/lib/pgsql/${version}/data/base/",
- }  
+  }  
 
   file { "/var/lib/pgsql/${version}/data/pg_hba.conf":
     ensure  => file,
