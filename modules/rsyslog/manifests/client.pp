@@ -12,12 +12,11 @@
 ## where <log_name> - path to application logs (/path/to/logs/*.log in cseof multiple logs)
 ##       <app_name> - tag name for application
 
-define rsyslog::client (
+class rsyslog::client (
 
   $log_proto = 'tcp',
   $log_port  = '601',
   $log_serv  = '192.168.56.15',
-  $apps      = [],
 ){
 # the <log_serv> value can be defined as an IP address either as a domain name
   $db_host   = 'localhost'
@@ -44,17 +43,6 @@ define rsyslog::client (
       }
     }
     default: { fail("unsupported platform ${::osfamily}") }
-  }
-
-  $apps.each |$app| {
-    $filename = $app[app_name]
-    file { "/etc/rsyslog.d/${filename}.conf":
-      ensure  => file,
-      mode    => '0644',
-      owner   => 'root',
-      content => template('rsyslog/appslog.conf.erb'),
-      notify  => Service['rsyslog'],
-    }
   }
 
   file { '/etc/rsyslog.conf':

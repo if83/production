@@ -8,9 +8,14 @@ class profile::sonarqube {
   $db_host       = 'localhost'
   $sonar_version = '6.7.2'
 
-  rsyslog::client { 'app' :
-    apps     => [{log_name => '/usr/local/sonar/logs/*.log', log_tag  => 'sonar_',
-                 app_name => 'sonar', severity => 'info',}],
+  class {'rsyslog::client':
+  }
+
+  rsyslog::config {'sonar':
+    log_name => '/usr/local/sonar/logs/*.log',
+    log_tag  => 'sonar_',
+    app_name => 'sonar',
+    severity => 'info',}],
   }
 
   firewall::openport {'sonar':
