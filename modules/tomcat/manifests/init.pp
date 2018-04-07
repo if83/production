@@ -81,7 +81,11 @@ class tomcat
     content           => epp('tomcat/users.conf.epp', $users_conf_hash),
     notify            => Service['tomcat'],
   }
+<<<<<<< HEAD
 # Start tomcat
+=======
+# Start tomcat 
+>>>>>>> 9a76874044cfff6a40ff47b58cf74dfcfe25fbf1
   service { 'tomcat':
      enable           => true,
      ensure           => running,
