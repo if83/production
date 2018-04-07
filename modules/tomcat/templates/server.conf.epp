@@ -1,4 +1,4 @@
-<%- | String $host_name,
+<%- | String $dns_name,
       String $appdir
 | -%>
 <?xml version='1.0' encoding='utf-8'?>
@@ -142,8 +142,8 @@
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
       </Host>
-      <Host name="<%= $host_name %>" appBase="webapps" unpackWARs="true" autoDeploy="true">
-        <Alias>www.<%= $host_name %>.com</Alias>
+      <Host name="<%= $dns_name %>" appBase="webapps" unpackWARs="true" autoDeploy="true">
+        <Alias>www.<%= $dns_name %>.com</Alias>
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" prefix="mysite_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b" />
         <Context path="" docBase="<%= $appdir %>" reloadable="true"/>
       </Host>

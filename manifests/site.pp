@@ -50,7 +50,7 @@ node 'dbslave.if083' {
 
 
 node /^web/ {
-  include role::web
+  include role::webapp
 }
 
 node 'rsyslog' {

@@ -3,19 +3,21 @@
 #
 class tomcat::install 
 (
-  $packages         = $tomcat::params::packages,
-)
-{
+  $tomcat_version,
+){
+  # config variables for tomcat
+	
+  $packages           = [ 'tomcat-webapps', 'tomcat-admin-webapps']
 
-# Install 'tomcat', 'tomcat-webapps', 'tomcat-admin-webapps'
-package { $packages:
-	  ensure 				=> installed,
-  	before   			=> Package['httpd'],
-}
+  # Install 'tomcat', 'tomcat-webapps', 'tomcat-admin-webapps'
 
-# install httpd.
-    package { 'httpd':
-    ensure    => installed,
+  package { 'tomcat':
+  	ensure 		        => $tomcat_version,
+    }
+
+  package { $packages:
+    ensure            => installed,
+    require           => Package['tomcat'],
   }
 
 }

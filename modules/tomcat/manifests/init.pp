@@ -5,26 +5,87 @@
 #
 #
 class tomcat 
-inherits tomcat::params 
-{
+(
 
-  include tomcat::install
-  include tomcat::configure
-  include tomcat::proxy
+# Appication variables  
+  $tomcat_version     = latest,
+  $dns_name           = 'example.local',
+  $docBase            = 'sample',
+  $man_user           = 'admin',  
+  $password           = 'admin', 
 
-  service { 'tomcat':
-     enable      => true,
-     ensure      => running,
-     #hasrestart => true,
-     #hasstatus  => true,
-     require    => File["$users_conf_file"],
+# Tomcat variables  
+  $java_home          = '/usr/java/default/jre',
+  $java_heap          = '512m',
+){ 
+  # Install tomcat
+  class { 'tomcat::install':
+    tomcat_version    => $tomcat_version,
   }
-  service { 'httpd':
-     enable      => true,
-     ensure      => running,
-     #hasrestart => true,
-     #hasstatus  => true,
-    require    => Service['tomcat'],
+
+# Сonfig default variables for tomcat
+  $catalina_home      = '/usr/share/tomcat'
+  $confdir            = "$catalina_home/conf"
+  $tomcat_conf_file   = "$confdir/tomcat.conf"
+  $server_conf_file   = "$confdir/server.xml"
+  $users_conf_file    = "$confdir/tomcat-users.xml"
+
+# # Making sure the  aplication directory is present/created Create
+  $appdir             = "$catalina_home/webapps/$docBase"
+  if ($docBase != 'sample') {
+    file { $appdir:
+      ensure          => directory,
+      owner           => 'tomcat',
+      group           => 'tomcat',
+      mode            => '0774',
+    } 
+  }
+
+# Configured  /etc/tomcat/tomcat.conf for JAVA_HOME="/usr/java/jdk1.8.0_162/jre"  
+  $tomcat_conf_hash = {
+    'java_path'       => $java_home,
+    'java_heap'       => $java_heap,
+  }
+  file { $tomcat_conf_file:
+    owner             => 'tomcat',
+    group             => 'tomcat',
+    mode              => '0664',
+    content           => epp('tomcat/tomcat.conf.epp', $tomcat_conf_hash),
+    notify            => Service['tomcat'],
+  }
+
+# Configured  /etc/tomcat/server.xml for docBase and dns_name
+  $server_conf_hash = {
+    'dns_name'        => $dns_name,
+    'appdir'          => $appdir,
+  }
+
+  file { $server_conf_file:
+    owner             => 'tomcat',
+    group             => 'tomcat',
+    mode              => '0664',
+    content           => epp('tomcat/server.conf.epp', $server_conf_hash),
+    notify            => Service['tomcat'],
+  }
+
+  # Configured  /etc/tomcat/tomcat-users.xml for user and password 
+  $users_conf_hash = {
+    'user_name'       => $man_user,
+    'password'        => $password,
+  }
+
+  file { $users_conf_file:
+    owner             => 'tomcat',
+    group             => 'tomcat',
+    mode              => '0664',
+    content           => epp('tomcat/users.conf.epp', $users_conf_hash),
+    notify            => Service['tomcat'],
+  }
+# Start tomcat
+  service { 'tomcat':
+     enable           => true,
+     ensure           => running,
+     require          => File["$users_conf_file"],
   }
 
 }

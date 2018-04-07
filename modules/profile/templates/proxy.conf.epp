@@ -1,10 +1,10 @@
-<%- | String $host_name
+<%- | String $dns_name
 | -%>
 # This file is managed by Puppet. Please do not make manual changes.
 #____________________________________________________________________________
 
 <VirtualHost *:80>
-  ServerName <%= $host_name %>
+  ServerName <%= $dns_name %>
   ProxyRequests Off
   ProxyPreserveHost On
   ProxyPass / ajp://localhost:8009/
