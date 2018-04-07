@@ -4,8 +4,7 @@
 class tomcat::install 
 (
   $tomcat_version,
-)
-{
+){
   # config variables for tomcat
 	
   $packages           = [ 'tomcat-webapps', 'tomcat-admin-webapps']
@@ -13,19 +12,12 @@ class tomcat::install
   # Install 'tomcat', 'tomcat-webapps', 'tomcat-admin-webapps'
 
   package { 'tomcat':
-  	ensure 		      => $tomcat_version,
+  	ensure 		        => $tomcat_version,
     }
 
   package { $packages:
     ensure            => installed,
     require           => Package['tomcat'],
   }
-
-  # Install httpd.
-  package { 'httpd':
-    ensure            => installed,
-    require           => Package['tomcat'],
-  }
-
 
 }

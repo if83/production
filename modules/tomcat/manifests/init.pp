@@ -15,23 +15,14 @@ class tomcat
   $password           = 'admin', 
 
 # Tomcat variables  
-  $java_home      = '/usr/java/default/jre',
-  $java_heap      = '512m',
-) 
-{ 
-
+  $java_home          = '/usr/java/default/jre',
+  $java_heap          = '512m',
+){ 
   # Install tomcat
   class { 'tomcat::install':
-    
     tomcat_version    => $tomcat_version,
   }
 
-  # Install mod_proxy
-  class { 'tomcat::proxy':
-    
-    dns_name          => $dns_name,
-  }
-  
 # Сonfig default variables for tomcat
   $catalina_home      = '/usr/share/tomcat'
   $confdir            = "$catalina_home/conf"
@@ -40,7 +31,7 @@ class tomcat
   $users_conf_file    = "$confdir/tomcat-users.xml"
 
 # # Making sure the  aplication directory is present/created Create
-  $appdir           = "$catalina_home/webapps/$docBase"
+  $appdir             = "$catalina_home/webapps/$docBase"
   if ($docBase != 'sample') {
     file { $appdir:
       ensure          => directory,
@@ -90,21 +81,11 @@ class tomcat
     content           => epp('tomcat/users.conf.epp', $users_conf_hash),
     notify            => Service['tomcat'],
   }
-# Start tomcat and mod_proxy
+# Start tomcat 
   service { 'tomcat':
      enable           => true,
      ensure           => running,
-     #hasrestart => true,
-     #hasstatus  => true,
      require          => File["$users_conf_file"],
-  }
-
-  service { 'httpd':
-     enable           => true,
-     ensure           => running,
-     #hasrestart => true,
-     #hasstatus  => true,
-    require           => Service['tomcat'],
   }
 
 }
