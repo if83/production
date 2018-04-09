@@ -22,7 +22,7 @@ define firewall::openport (
 
   $dports.each |String $dport| {
     exec { "firewall-cmd-${dport}-${dproto}":
-      command => "firewall-cmd --zone=public --add-port=${dport}/${dproto} --permanent",
+      command => "firewall-cmd --zone=public --add-port=${dport}/$d{proto} --permanent",
       path    => "/usr/bin/",
       before  => Exec["firewall-reload${title}"],
     }
