@@ -15,13 +15,14 @@
 # == Define: base::firewall
 #
 define firewall::openport (
-  $dports='',
+  $dports = '',
+  $dproto = 'tcp',
   ) {
   require firewall
 
   $dports.each |String $dport| {
-    exec { "firewall-cmd-${dport}":
-      command => "firewall-cmd --zone=public --add-port=${dport}/tcp --permanent",
+    exec { "firewall-cmd-${dport}-{$dproto}":
+      command => "firewall-cmd --zone=public --add-port=${dport}/${dproto} --permanent",
       path    => "/usr/bin/",
       before  => Exec["firewall-reload${title}"],
     }
