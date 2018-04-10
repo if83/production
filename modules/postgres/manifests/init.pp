@@ -13,7 +13,7 @@ class postgres (
   $owner            = 'sonar',
   $db_pass          = 'sonar',
   $dbname           = 'sonar',
-  $user_host        = 'localhost',
+  $user_host        = '127.0.0.1',
   $source_url       = 'https://download.postgresql.org/pub/repos/',
   $dport            = '5432',
 ){
@@ -24,6 +24,7 @@ class postgres (
   $psql_user        = 'postgres'
   $psql_group       = 'postgres'
   $psql_path        = '/usr/bin/psql'
+  $user_ipmask      = "$user_host/32"
 
   Exec {
     path => '/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin',

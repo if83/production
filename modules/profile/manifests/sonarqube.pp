@@ -1,7 +1,7 @@
 class profile::sonarqube {
 
   $dports        = ['9000','5432']
-  $user_host     = 'localhost'
+  $user_host     = '127.0.0.1'
   $java_mode     = 'jdk'
   $db_provider   = 'psql'
   $admin_pass    = 'N3WP@55'
