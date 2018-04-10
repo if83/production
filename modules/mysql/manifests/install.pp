@@ -10,7 +10,6 @@ class mysql::install {
 
 package { 'mysql-community-server':
   ensure  => present,
-  require => Yumrepo['mysql-repo'],
 }
 
 }

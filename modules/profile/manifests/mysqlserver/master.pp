@@ -36,4 +36,13 @@ if $is_master {
       grant     => 'REPLICATION SLAVE',
     }
   }
+  
+class {'rsyslog::client':
+}
+rsyslog::config {'mysql':
+  log_name => '/var/log/mysqld.log',
+  log_tag  => 'mysql_',
+  app_name => 'mysql',
+  severity => 'info',
+}
 }

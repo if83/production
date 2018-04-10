@@ -43,4 +43,13 @@ class { 'mysql':
       unless  => "grep ${master_ip} $datadir/master.info && grep ${master_port} $datadir/master.info && grep -w ${replica_user} $datadir/master.info && grep -w ${replica_password} $datadir/master.info",
     }
   }
+
+class {'rsyslog::client':
+}
+rsyslog::config {'mysql-slave':
+  log_name => '/var/log/mysqld.log',
+  log_tag  => 'mysql-slave_',
+  app_name => 'mysql',
+  severity => 'info',
+}
 }
