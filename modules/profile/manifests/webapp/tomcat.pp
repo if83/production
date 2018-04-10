@@ -7,7 +7,7 @@ class profile::webapp::tomcat
   
 # Appication variables  
   $tomcat_version       = '7.0.76-3.el7_4'
-  $dns_name             = 'bugtrckr.if083'
+  $dns_name             = "$fqdn"
   $docBase              = 'BugTrckr-0.5.0-SNAPSHOT'
   $man_user             = 'manager'
   $password             = 'manager'

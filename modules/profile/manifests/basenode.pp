@@ -3,12 +3,9 @@ class profile::basenode {
   include motd
 
 # schedule parameters for update
-  $period        = 'daily'
-  $repeat        = '1'
-
   class { 'base':
-    period       => $period,
-    repeat       => $repeat,
+    period       => 'daily',
+    repeat       => '1',
   }
 
 # Configure ssh_user

@@ -1,5 +1,5 @@
 class base::ntp (
-  $ntp_service = 'ntpd',
+  	$ntp_service = 'ntpd',
 ){
 	# Configure  ntp.conf
 
@@ -16,6 +16,5 @@ class base::ntp (
 	  name      => $ntp_service,
 	  ensure    => running,
 	  enable    => true,
-	  subscribe => File['ntp.conf'],
 	}
 }
