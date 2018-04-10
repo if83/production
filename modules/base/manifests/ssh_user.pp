@@ -1,35 +1,27 @@
 define base::ssh_user (
-    $ssh_user,
-    $ssh_password,
-    $ssh_group,
-)
-{
-  #$key          = 'AAAAB3NzaC1yc2EAAAADAQABAAABAQC+R3QXANAoW/mu6yQufC2ZO/llJp7nV1Dk4hi0v2KkyRAk3fQKPgk8FuvuNLxA0IbEMebnQPeEdu3IybJZ9flc8C7DPvB6pP8JHGpS9dZnUjjtVR7ebBJ2dEZcSbJYeP4xrXmu8nCb5EFrvceLRZcBtSwdhtNRBflya6NEFEGee5cVCSmDYfDlapPQOCqIdvTWqHxghQojA5qyQ4psfRfX0+H/wEHGs1ztw4rp+vVlAVLLPsNeOFyq+x6YKNcHloZDpawiT6Qm4DgC3KeUKwfUFLl4GaDZhcu/HFmzmGQqG/YzoUct7zyudcr9w9YHpkV8QgM53wP1alFw3G4EJa7L'
-  #$group        = 'wheel',
-  $shell        = "/bin/bash"
-  $home         = "/home/${ssh_user}"
-  $ssh          = "$home/.ssh"
-  $key          = "$ssh/authorized_keys"
+    $ssh_user     = 'admin',
+    $ssh_password = 'MHFqAb1XfnC8Q',
+    $key          = 'AAAAB3NzaC1yc2EAAAADAQABAAABAQCanKzx6z+UImiT3sWUhTrqtWS7WtoyDzv4d48u+f+D0nZlJwP1nXUL3ca32Kz9JbKMLe+MlvZQzW7wJ8m2BVRuKXAIxmLRW3rhYjHgULrSr4OZ46i4Gi/YhDTnyW/28SuOpGD3wlk5cN0rxT0paB/Icoa6nIOjzn+RNJFAvMpblV4O/cVstLJZ2xrZlX+ZoCl3J2OXBkiDc+0xxJU7SEaIkz+WqJceELCKQ76r5GNZXyP+ow6t8egrTJXnBOguo1I8Ssf4UlZ/OnYGsg/17VtmrYulimvZiyJV4ZTmcRbnu1EggQz/2buif8ec2zekhlnjgqN4Ltkwp+D3SYehL0SX'
+){
+# default user: admin password: admin
 
+  # Choose sudo group for ssh_user
+  if $::osfamily == 'RedHat' {
+    $ssh_group  = 'wheel'
+  }
+  elsif $::osfamily == 'Debian' {
+    $ssh_group  = 'sudo'
+  }
 
-
+  # Configure  ssh_authorized_key
+  $ssh          = "/home/${ssh_user}/.ssh"
   user { "$ssh_user":
     ensure      => present,
     name        => $ssh_user,
     password    => $ssh_password,
     groups      => $ssh_group,
-    shell       => $shell,
-    home        => $home,
-    #uid         => '501',
-    #gid         => '20',
-    #managehome  => true,
-  }
-
-  file { "$home":
-    ensure      => directory,
-    owner       => $ssh_user,
-    group       => $ssh_group,
-    mode        => '0755',
+    shell       => "/bin/bash",
+    managehome  => true,    
   }
 
   file { "$ssh":
@@ -37,20 +29,14 @@ define base::ssh_user (
     owner       => $ssh_user,
     group       => $ssh_group,
     mode        => '0700',
-    require     => File[ "$home" ],
-  }
- 
-  # Configured  /etc/tomcat/server.xml for docBase and host_name
-  $key_hash     = {
-    'host_name' => "${ssh_user}@$fqdn",
+    require     => User["$ssh_user"],
   }
 
-  file { "$key":
-    owner       => $user,
-    group       => $group,
-    mode        => '0600',
-    content     => epp('base/key.epp', $key_hash),
-    require     => File[ "$ssh" ], 
-  }
-  
+  ssh_authorized_key { "${ssh_user}@$fqdn":
+    ensure      => present,
+    user        => $ssh_user,
+    type        => 'ssh-rsa',
+    key         => $key,
+    require     => File["$ssh"],    
+  } 
 }
