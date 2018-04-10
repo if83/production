@@ -11,11 +11,13 @@ file { 'data-dump.sql':
   group  => 'root',
   mode   => '0644',
   source => 'puppet:///modules/mysql/data-dump.sql',
+  require => Class['profile::mysqlserver::users'],
 }
 
 exec { 'mysql_import_tables':
   path    => '/usr/bin:/usr/sbin:/bin',
   command => "mysql -u root -p'${root_pwd}' bugtrckr < /tmp/data-dump.sql",
-  unless  => "mysql -u root -p'${root_pwd}' -e \"SELECT * FROM IssueComment;\"",
+  unless  => "mysql -u root -p'${root_pwd}' -e \"USE bugtrckr;SELECT * FROM Issue;\"",
   require => File['data-dump.sql'],
+}
 }
