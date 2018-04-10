@@ -27,13 +27,13 @@ class base (
 	}
 
 	# Start packages
-	$packages = ['tree', 'mc', 'net-tools', 'ntp']
+	$packages = ['tree', 'mc', 'net-tools', 'ntp', 'wget']
 	package { $packages:
 		ensure       => installed,
 	}	
 	# Configure ntp service
 	class { 'base::ntp':
 		ntp_service	 => $ntp_service,
-		require      => Package[$packages],	
+		require      => Package['ntp'],	
 	}
 }

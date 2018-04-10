@@ -1,7 +1,7 @@
 class profile::basenode {
 
   include motd
-
+  include rpmrepo::repocfg
 # schedule parameters for update
   class { 'base':
     period       => 'daily',
@@ -9,11 +9,9 @@ class profile::basenode {
   }
 
 # Configure ssh_user
-# Defaulf user if083 password if083
   base::ssh_user { 'if083':
     ssh_user     => 'if083',
-    ssh_password => 'K7xRO54jYI7Ws',
-    key          => 'AAAAB3NzaC1yc2EAAAADAQABAAABAQDYas7S4GkDiT8ePqcjEq2byr4Fu9oQwi9XNBbB/+ZKmUu1mKPtd5CwC6qMYPMof50bG9dnwUdN36G6GpBcK82PpmMYndQuGc9Luluhia8gFI/lpXQiPwrw5gjYve4GW/wtT+1GBJ0b5FUeY5pLbGVvgdpyZ39Q4dCXiJEdPjLXM7SWOc7KrnVYpm+D/FqsG1VtUDUs3qnF4EXpNhQGH61yFpwQ52om8dg4bjzgLD1IgoTaUjajWJBdp7SV/8nbakKLrmwkweGQo1jS3xGAe61+KCbpPhPpRvGikllJ5Cgu7d0QypOTl4ySNRGrl1gQpwg5ya148/E9OZ09AGUmPPAJ'
+    key          => file('profile/service.pub'),
   }
 # Configure rsyslog
   rsyslog::config { 'secure':
