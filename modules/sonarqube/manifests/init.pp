@@ -48,11 +48,6 @@ class sonarqube (
     group => "${group}",
   }
 
-  package { 'wget':
-    ensure => installed,
-    before => Exec['download-sonar'],
-  }
-
   group { "${group}":
     ensure => present,
     system => $sys_user,
