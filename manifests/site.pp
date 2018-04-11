@@ -30,10 +30,7 @@ node 'sonar' {
 }
 
 node 'zabbix' {
-  include zabbixsrv
-}
-node 'db'{
-  include zabbixagent
+  include role::zabbix
 }
 
 node 'balancer' {
