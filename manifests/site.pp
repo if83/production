@@ -19,7 +19,9 @@ node default {
   #   class { 'my_class': }
 }
 # here is the line 23
-
+node 'pmaster' {
+  include role::pmaster
+}
 
 node 'jenkins.if083' {
   include role::jenkins::master
@@ -32,8 +34,8 @@ node 'sonar' {
 node 'zabbix' {
   include zabbixsrv
 }
-node 'db'{
-  include zabbixagent
+node 'binddns'{
+  include role::binddns
 }
 
 node 'balancer' {
