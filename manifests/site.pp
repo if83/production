@@ -29,7 +29,7 @@ node 'sonar' {
   include role::sonarqube
 }
 
-node 'zabbix' {
+node 'zabbix.if083' {
   include role::zabbix
 }
 

@@ -1,5 +1,7 @@
 class profile::zabbix::server {
   $dports      = ['80','10050']
+  
+  include httpd
 
   class { 'zabbix::server':
     dbhost     => 'db.if083',

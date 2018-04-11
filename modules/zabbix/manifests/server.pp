@@ -8,14 +8,6 @@ class zabbix::server (
 {
   require zabbix
 
-  package { 'httpd':
-    ensure => installed, 
-  }
-
-  package { 'mysql':
-    ensure => installed,
-  }
- 
   package { 'zabbix-server-mysql':
     ensure   => installed,
     provider => 'yum',
@@ -42,7 +34,6 @@ class zabbix::server (
   file { "/etc/httpd/conf.d/zabbix.conf":
     ensure  => file,
     content => template('zabbix/zabbix.conf.erb'),
-    require => Package['httpd'],
     notify  => Service['httpd'],
     mode    => '0664',
   }
@@ -59,7 +50,6 @@ class zabbix::server (
   exec { 'db_init':
     command => "/bin/bash -c '/opt/db_init.sh'",
     creates => '/var/log/zabbix/zabbix_server.log',
-    require => Package['mysql'],
   }
   
   file {'/etc/zabbix/web/zabbix.conf.php':
@@ -92,10 +82,6 @@ class zabbix::server (
   }
   
 
-
-  service { 'httpd':
-    ensure => running, 
-  }
 
   service { 'zabbix-server':
     ensure  => running,
