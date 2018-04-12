@@ -6,5 +6,6 @@ class role::master {
 	include profile::mysqlserver::users
 	include profile::mysqlserver::dump
 	include profile::zabbix::agent
+	include profile::basenode
 	# resources
 }
