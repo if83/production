@@ -9,11 +9,15 @@
 #   include rpmrepo::repocfg
 #
 #
-class rpmrepo::repocfg {
-  yumrepo { 'repo':
+define rpmrepo::repocfg (
+  $reponame,
+  $url,
+  $subpath,
+  ) {
+  yumrepo { "repo-${title}":
     enabled  => 1,
-    descr    => $rpmrepo::repo_name,
-    baseurl  => "http://${rpmrepo::repo_domain}",
+    descr    => "${reponame}",
+    baseurl  => "${url}/${subpath}",
     gpgcheck => 0,
     priority => 1,
   }

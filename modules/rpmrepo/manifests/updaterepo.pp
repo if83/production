@@ -9,8 +9,8 @@ define rpmrepo::updaterepo (
   $update_hour = 'absent',
 
   ) {
-  cron { 'update_repo':
-    command => "createrepo ${repo_dir}",
+  cron { "update_repo${title}":
+    command => "/usr/bin/createrepo --update ${repo_dir}",
     user    => $user,
     hour    => $update_hour,
     minute  => $update_min,

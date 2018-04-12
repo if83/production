@@ -5,16 +5,16 @@ class profile::webapp::tomcat
   include httpd
   include firewall
 
-# Appication variables  
+# Appication variables
   $tomcat_version       = '7.0.76-3.el7_4'
-  $dns_name             = 'bugtrckr.if083'
+  $dns_name             = "$fqdn"
   $docBase              = 'BugTrckr-0.5.0-SNAPSHOT'
   $man_user             = 'manager'
   $password             = 'manager'
 
-# tomcat variables  
+# tomcat variables
   $java_home            = '/usr/java/default/jre'
-  $java_heap            = '512m'
+  $java_heap            = '256m'
 
 # firewall variables
   $dports               = ['80', '8080']
@@ -31,17 +31,17 @@ class profile::webapp::tomcat
   }
 
 # Configure rsyslog
-  class {'rsyslog::client':
+  class { 'rsyslog::client':
   }
-  rsyslog::config {'tomcat':
+  rsyslog::config { 'tomcat':
     log_name            => '/var/log/tomcat/*',
     log_tag             => 'tomcat_',
     app_name            => 'tomcat',
     severity            => 'info',
   }
-  
+
 # Configure mod_proxy
-  class { 'profile::webapp::proxy':     
+  class { 'profile::webapp::proxy':
   }
 
 # Configure firewall
@@ -55,4 +55,11 @@ class profile::webapp::tomcat
     path                => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
     require             => Service['firewalld'],
   }
+  rpmrepo::repocfg {'apps':
+    reponame => "Our application build repository",
+    url      => "http://repo.if083",
+    subpath  => "apps"
+}
+
+
 }

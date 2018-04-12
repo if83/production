@@ -27,10 +27,17 @@ class rpmrepo (
 
   $repo_dirs.each |String $repo_dir| {
     file { "${repo_path}/${repo_dir}":
-      ensure => directory,
-      mode   => '0755',
-      owner  => $user,
-      group  => $group,
+      ensure  => directory,
+      mode    => '0755',
+      owner   => $user,
+      group   => $group,
+    }
+
+    exec { "repocreate-${repo_dir}":
+      command => "/usr/bin/createrepo --database ${repo_path}/${repo_dir}",
+      path => '/usr/bin',
+      creates => "${repo_path}/${repo_dir}/repodata",
+      require => Package['createrepo'],
     }
   }
 }
