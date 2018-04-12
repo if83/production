@@ -30,6 +30,14 @@ class profile::webapp::tomcat
     java_heap           => $java_heap,
   }
 
+ # Deploy application bugtrckr
+  class { 'profile::webapp::deploy':
+  }
+
+# Configure mod_proxy
+  class { 'profile::webapp::proxy':
+  }
+
 # Configure rsyslog
   class { 'rsyslog::client':
   }
@@ -38,10 +46,6 @@ class profile::webapp::tomcat
     log_tag             => 'tomcat_',
     app_name            => 'tomcat',
     severity            => 'info',
-  }
-
-# Configure mod_proxy
-  class { 'profile::webapp::proxy':
   }
 
 # Configure firewall
@@ -55,11 +59,12 @@ class profile::webapp::tomcat
     path                => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
     require             => Service['firewalld'],
   }
+# Configure repo
   rpmrepo::repocfg {'apps':
     reponame => "Our application build repository",
     url      => "http://repo.if083",
     subpath  => "apps"
-}
+  }
 
 
 }
