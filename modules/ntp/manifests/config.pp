@@ -1,13 +1,13 @@
-class base::ntp (
+class ntp::config (
   	$ntp_service = 'ntpd',
 ){
-	# Configure  ntp.conf
 
+	# Configure  ntp.conf
 	file { 'ntp.conf':
 	  path    	=> '/etc/ntp.conf',
 	  ensure  	=> file,
 	  require 	=> Package['ntp'],
-	  source  	=> "puppet:///modules/base/ntp.conf",
+	  source  	=> "puppet:///modules/ntp/ntp.conf",
 	  notify	=> Service['ntp'],
 	}
 	
