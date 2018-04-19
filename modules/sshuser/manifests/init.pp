@@ -1,6 +1,6 @@
-define base::ssh_user (
+define sshuser (
     $ssh_user     = 'admin',
-    $key          = file('base/default.pub'),
+    $key          = file('profile/default.pub'),
 ){
   # Choose sudo group for ssh_user
   if $::osfamily == 'RedHat' {
@@ -35,4 +35,9 @@ define base::ssh_user (
     key         => $key,
     require     => File["$ssh"],    
   } 
+
+# Configure sudo user
+  class { 'sshuser::sudo':
+    ssh_user    => $ssh_user,
+  }
 }

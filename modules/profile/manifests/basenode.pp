@@ -1,22 +1,41 @@
 class profile::basenode {
 
   include motd
+  include ntp
 
-# schedule parameters for update
-  class { 'base':
-    period       => 'daily',
-    repeat       => '1',
+  # OS parameters for Update
+  Exec {
+      path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
+  }
+  if $::osfamily == 'RedHat' {
+    exec { 'RedHat':
+          command => '/usr/bin/yum -y update',
+    }
+  }
+  elsif $::osfamily == 'Debian' {
+    exec { 'Debian':
+          command => '/usr/bin/apt-get -y update',
+    }
   }
 
+  # Start packages
+  $packages = ['tree', 'mc', 'net-tools', 'wget']
+  package { $packages:
+    ensure       => installed,
+  }
+
+# Configure ssh_user
+  sshuser { 'if083':
+    ssh_user     => 'if083',
+    key          => file('profile/service.pub'),
+  }
+
+
+# Configure rpmrepo
   rpmrepo::repocfg {'soft':
     reponame => "Our Soft",
     url      => "http://repo.if083",
     subpath  => "soft"
-  }
-# Configure ssh_user
-  base::ssh_user { 'if083':
-    ssh_user     => 'if083',
-    key          => file('profile/service.pub'),
   }
 # Configure rsyslog
   rsyslog::config { 'secure':
