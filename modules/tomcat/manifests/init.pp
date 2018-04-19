@@ -32,19 +32,7 @@ class tomcat
   $tomcat_conf_file   = "$confdir/tomcat.conf"
   $server_conf_file   = "$confdir/server.xml"
   $users_conf_file    = "$confdir/tomcat-users.xml"
-
-# # Making sure the  aplication directory is present/created Create
-
   $appdir             = "$catalina_home/webapps/$docBase"
-
-  if ($docBase != 'sample') {
-    file { $appdir:
-      ensure          => directory,
-      owner           => 'root',
-      group           => 'root',
-      mode            => '0774',
-    }
-  }
 
 # Configured  /etc/tomcat/tomcat.conf for JAVA_HOME="/usr/java/jdk1.8.0_162/jre"
   $tomcat_conf_hash = {

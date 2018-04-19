@@ -1,5 +1,6 @@
-class profile::webapp::tomcat
-{
+class profile::tomcat (
+  $docBase,
+){
 
   include java8
   include httpd
@@ -7,8 +8,7 @@ class profile::webapp::tomcat
 
 # Appication variables
   $tomcat_version       = '7.0.76-3.el7_4'
-  $dns_name             = "$fqdn"
-  $docBase              = 'BugTrckr-0.5.0-SNAPSHOT'
+  $dns_name             = $facts['networking']['fqdn']
   $man_user             = 'manager'
   $password             = 'manager'
 
@@ -28,14 +28,6 @@ class profile::webapp::tomcat
     password            => $password,
     java_home           => $java_home,
     java_heap           => $java_heap,
-  }
-
- # Deploy application bugtrckr
-  class { 'profile::webapp::deploy':
-  }
-
-# Configure mod_proxy
-  class { 'profile::webapp::proxy':
   }
 
 # Configure rsyslog

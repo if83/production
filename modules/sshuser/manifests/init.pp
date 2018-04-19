@@ -11,6 +11,7 @@ define sshuser (
   }
 
   # Configure  ssh_authorized_key
+  $dns_name     = $facts['networking']['fqdn']
   $ssh          = "/home/${ssh_user}/.ssh"
   user { "$ssh_user":
     ensure      => present,
@@ -28,7 +29,7 @@ define sshuser (
     require     => User["$ssh_user"],
   }
 
-  ssh_authorized_key { "${ssh_user}@$fqdn":
+  ssh_authorized_key { "${ssh_user}@$dns_name":
     ensure      => present,
     user        => $ssh_user,
     type        => 'ssh-rsa',

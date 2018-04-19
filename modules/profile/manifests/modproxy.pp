@@ -2,13 +2,15 @@
 # 
 #
 #
-class profile::webapp::proxy
-{
-  
-  # config variables for mod_proxy
-  $dns_name=$::profile::webapp::tomcat::dns_name
-  $proxy_conf_file    = '/etc/httpd/conf.d/tomcat.conf'
+class profile::modproxy (
+# config template for mod_proxy
+  $proxy_template     = "profile/proxy.conf.epp",
+){
 
+# config variables for mod_proxy
+  $dns_name           = $facts['networking']['fqdn']
+  $proxy_conf_file    = '/etc/httpd/conf.d/tomcat.conf'
+  
 # Configure rsyslog
 #  class {'rsyslog::client':
 # }
@@ -29,7 +31,7 @@ class profile::webapp::proxy
     owner             => 'root',
     group             => 'root',
     mode              => '0664',
-    content           => epp('profile/proxy.conf.epp', $proxy_conf_hash),
+    content           => epp($proxy_template, $proxy_conf_hash),
     notify            => Service['httpd'],
   }
 
