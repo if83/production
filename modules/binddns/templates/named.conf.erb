@@ -1,0 +1,77 @@
+//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+// See the BIND Administrator's Reference Manual (ARM) for details about the
+// configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+
+options {
+	listen-on port 53 { 127.0.0.1;<%= @ip_pool %>.<%= @ip_mask %>; };
+    listen-on-v6 port 53 { none; };
+    directory   "/var/named";
+    dump-file   "/var/named/data/cache_dump.db";
+    statistics-file "/var/named/data/named_stats.txt";
+    memstatistics-file "/var/named/data/named_mem_stats.txt";
+    allow-query  { localhost;<%= @ip_pool %>.<%= @ip_mask %>; };
+
+	/* 
+     - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+     - If you are building a RECURSIVE (caching) DNS server, you need to enable 
+       recursion. 
+     - If your recursive DNS server has a public IP address, you MUST enable access 
+       control to limit queries to your legitimate users. Failing to do so will
+       cause your server to become part of large scale DNS amplification 
+       attacks. Implementing BCP38 within your network would greatly
+       reduce such attack surface 
+    */
+    recursion no;
+//  recursion yes;
+//  allow-recursion     { localhost;<%= @ip_pool %>.<%= @ip_mask %>; };
+//  forwarders          { 8.8.8.8; }
+    dnssec-enable no;
+    dnssec-validation no;
+    querylog yes;
+
+    /* Path to ISC DLV key */
+    bindkeys-file "/etc/named.iscdlv.key";
+
+    managed-keys-directory "/var/named/dynamic";
+
+    pid-file "/run/named/named.pid";
+    session-keyfile "/run/named/session.key";
+};
+
+logging {
+    channel default {
+      file "/var/log/named/default.log" versions 5 size 5m;
+      severity dynamic;
+      print-time yes;
+    };
+    channel "query" {
+      file "/var/log/named/query.log" versions 5 size 5m;
+      print-time yes;
+      print-severity no;
+      print-category no;
+    };
+    category default { default; };
+    category queries { query;   };
+};
+
+zone "<%= @domainname %>" IN {
+    type <%= @masterslave %>;
+    file "fwd.<%= @domainname %>.db";
+    allow-update { none; };
+};
+
+zone "<%= @reverse_pool%>.in-addr.arpa" IN {
+    type <%= @masterslave %>;
+    file "<%= @reverse_pool%>.db";
+    allow-update { none; };
+};
+
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";
