@@ -18,8 +18,11 @@ node default {
   # Example:
   #   class { 'my_class': }
 }
-# here is the line 23
+# here is the line 21
 
+node 'dns' {
+  include role::binddns
+}
 
 node 'jenkins.if083' {
   include role::jenkins::master
@@ -34,7 +37,7 @@ node 'zabbix.if083' {
 }
 
 node 'balancer' {
-  $web_serv_name_ip=["web1 192.168.56.161", "web2 192.168.56.162"]
+  $web_serv_name_ip=["web1 192.168.56.161", "web2 192.168.56.162", "web3 192.168.56.163"]
   include haproxy
 }
 
@@ -44,7 +47,6 @@ node 'db.if083' {
 node 'dbslave.if083' {
   include role::slave
 }
-
 
 node /^web/ {
   include role::webapp

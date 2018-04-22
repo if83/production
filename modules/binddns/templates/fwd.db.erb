@@ -1,0 +1,29 @@
+$TTL 86400
+@   IN  SOA     <%= @dnsservername %>.<%= @domainname %>. root.<%= @domainname %>. (
+3           ;Serial
+3600        ;Refresh
+1800        ;Retry
+604800      ;Expire
+86400       ;Minimum TTL
+)
+;Name Server Information
+         IN  NS      <%= @dnsservername %>.<%= @domainname %>.
+;IP address of Name Server
+<%= @dnsservername %>.<%= @domainname %>. IN  A       <%= @ip_pool %>.<%= @dnsserverip %>
+;A - Record HostName To Ip Address
+pmaster   IN  A       <%= @ip_pool %>.10
+rsyslog   IN  A       <%= @ip_pool %>.15
+db        IN  A       <%= @ip_pool %>.150
+dbslave   IN  A       <%= @ip_pool %>.151
+balancer  IN  A       <%= @ip_pool %>.160
+web1      IN  A       <%= @ip_pool %>.161
+web2      IN  A       <%= @ip_pool %>.162
+web3      IN  A       <%= @ip_pool %>.163
+jenkins   IN  A       <%= @ip_pool %>.170
+sonar     IN  A       <%= @ip_pool %>.180
+gitlab    IN  A       <%= @ip_pool %>.190
+repo      IN  A       <%= @ip_pool %>.191
+zabbix    IN  A       <%= @ip_pool %>.200
+
+;Mail exchanger
+;<%= @domainname %>. IN  MX 10   mail.<%= @domainname %>.
