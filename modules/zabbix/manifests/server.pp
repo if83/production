@@ -1,5 +1,5 @@
 class zabbix::server (
-  $dbhost = 'db.if083',
+  $dbhost = 'localhost',
   $dbname = 'zabbix',
   $dbuser = 'zabbix',
   $dbpassword = '3a66ikc_DB',
