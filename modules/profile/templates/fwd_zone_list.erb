@@ -1,0 +1,13 @@
+pmaster   IN  A       <%= @ip_pool %>.10
+rsyslog   IN  A       <%= @ip_pool %>.15
+db        IN  A       <%= @ip_pool %>.150
+dbslave   IN  A       <%= @ip_pool %>.151
+balancer  IN  A       <%= @ip_pool %>.160
+web1      IN  A       <%= @ip_pool %>.161
+web2      IN  A       <%= @ip_pool %>.162
+web3      IN  A       <%= @ip_pool %>.163
+jenkins   IN  A       <%= @ip_pool %>.170
+sonar     IN  A       <%= @ip_pool %>.180
+gitlab    IN  A       <%= @ip_pool %>.190
+repo      IN  A       <%= @ip_pool %>.191
+zabbix    IN  A       <%= @ip_pool %>.200
