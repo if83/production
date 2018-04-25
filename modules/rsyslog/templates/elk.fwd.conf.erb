@@ -1,0 +1,42 @@
+
+template(name="json-template"
+  type="list" option.jsonf="on") {
+    constant(value="{")
+      constant(value="\"@timestamp\":\"")     property(name="timereported" dateFormat="rfc3339")
+      constant(value="\",\"@version\":\"1")
+      constant(value="\",\"message\":\"")     property(name="msg" format="json")
+      constant(value="\",\"sysloghost\":\"")  property(name="hostname")
+      constant(value="\",\"severity\":\"")    property(name="syslogseverity-text")
+      constant(value="\",\"facility\":\"")    property(name="syslogfacility-text")
+      constant(value="\",\"programname\":\"") property(name="programname")
+      constant(value="\",\"procid\":\"")      property(name="procid")
+    constant(value="\"}\n")
+}
+
+ruleset(name="sendToElkServer") {
+    action(type="omfwd" Target="<%= @elk_server %>" Port="<%= @elkport %>" Protocol="<%= @elk_proto %>" Template="json-template" resendlastmsgonreconnect="on" queue.filename="forwarding" queue.size="1000000" queue.type="LinkedList" queue.saveonshutdown="on")
+}
+
+ruleset(name="elk_logs") {
+    set $.suffix=replace(re_extract($!metadata!filename, "(.*)/([^/]*)", 0, 2, "common.log"), ".log", "");
+    call sendToElkServer
+}
+
+<% @node_list.each do |node| -%>
+<% if node != 'rsyslog' -%> 
+input(type="imfile"
+      File="/var/log/remote/<%= node %>/*"
+      Tag="<%= node %>"
+      Severity="<%= @severity %>"
+      Facility="<%= @facility %>"
+      PersistStateInterval="5"
+      Ruleset="elk_logs"
+      addMetadata="on"
+)
+<% end -%>
+<% end -%>
+
+####   *.*                         @@<%= @elk_server %>:10514;json-template
+
+
+### https://www.digitalocean.com/community/tutorials/how-to-centralize-logs-with-rsyslog-logstash-and-elasticsearch-on-ubuntu-14-04

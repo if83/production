@@ -3,6 +3,7 @@ define rsyslog::config (
   $log_name = undef,
   $log_tag  = 'sys_',
   $severity = 'info',
+  $facility = 'local7',
 ){
   if log_name != undef {
     file { "/etc/rsyslog.d/${app_name}.conf":
