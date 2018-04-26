@@ -10,28 +10,36 @@
 #    hash          => '2f38c3b165be4555a1fa6e98c45e0808'
 #    java_se       => 'jre',
 # }
+#http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm
 class java8 (
   $java_se       = 'jdk',
   $oracle_url    = 'http://download.oracle.com/otn-pub/java/jdk/',
   $cookie        = '--no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie"',
-  $version_major = '162',
-  $version_minor = 'b12',
-  $hash          = '0da788060d494f5095bf8624735fa2f1',
+  $version_major = '172',
+  $version_minor = 'b11',
+  $hash          = 'a58eab1ec242421181065cdc37240b08',
   $load_dir      = "/tmp/",
   $arch_bit      = $java8::params::arch_bit,
+  $local_repo    = 'false',
+  $local_source  = undef,
 ) inherits java8::params {
 
  # validate java Standard Edition to download
   if $java_se !~ /(jre|jdk)/ {
     fail('Java SE must be either jre or jdk.')
   }
-
   $pkg       = "${java_se}-8u${version_major}-${arch_bit}.rpm"
-  $source    = "${cookie} ${oracle_url}8u${version_major}-${version_minor}/${hash}/$pkg"
   $pkg_path  = "${load_dir}${pkg}"
   $java_path = "/usr/java/${java_se}1.8.0_${version_major}"
   $env_filepath = "/etc/profile.d/app.sh"
 
+
+  if $local_repo == 'true' {
+    $source    = "${local_source}/${pkg}"
+  }
+  else {
+    $source    = "${cookie} ${oracle_url}8u${version_major}-${version_minor}/${hash}/$pkg"
+  }
 
   # get JDK8 .pkg
   exec { 'upload_pkg':
@@ -78,3 +86,4 @@ class java8 (
 }
 #http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.rpm
 #http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm
+#http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm

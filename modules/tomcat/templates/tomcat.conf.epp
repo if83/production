@@ -33,14 +33,14 @@ CATALINA_HOME="/usr/share/tomcat"
 
 # System-wide tmp
 CATALINA_TMPDIR="/var/cache/tomcat/temp"
-
+CATALINA_OPTS="-DJENKINS_HOME=/usr/share/tomcat/.jenkins/ -Xmx1024m"
 # You can pass some parameters to java here if you wish to
 #
 JAVA_OPTS="-Xmin<%= $java_heap %> -Xmax<%= $java_heap %>"
 
 # Use JAVA_OPTS to set java.library.path for libtcnative.so
 JAVA_OPTS="-Djava.library.path=/usr/lib"
-
+JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 # You can change your tomcat locale here
 #LANG="en_US"
 
@@ -54,3 +54,4 @@ SECURITY_MANAGER="false"
 # If you wish to further customize your tomcat environment,
 # put your own definitions here
 # (i.e. LD_LIBRARY_PATH for some jdbc drivers)
+# <% if $unsequre_install == true { -%> JAVA_OPTS="-Djenkins.install.runSetupWizard=false" %><% } %>

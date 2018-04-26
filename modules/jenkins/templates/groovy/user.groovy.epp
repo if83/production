@@ -1,0 +1,19 @@
+<%- | String $user_name,
+      String $user_pass
+| -%>
+
+
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+
+def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+hudsonRealm.createAccount("<%= $user_name %>","<%= $user_pass %>")
+instance.setSecurityRealm(hudsonRealm)
+
+def strategy = new GlobalMatrixAuthorizationStrategy()
+strategy.add(Jenkins.ADMINISTER, "<%= $user_name %>")
+instance.setAuthorizationStrategy(strategy)
+
+instance.save()

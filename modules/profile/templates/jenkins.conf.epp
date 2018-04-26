@@ -1,0 +1,57 @@
+<%- | String $dns_name
+| -%>
+# This file is managed by Puppet. Please do not make manual changes.
+#____________________________________________________________________________
+
+<VirtualHost *:80>
+  ServerName <%= $dns_name %>
+  AllowEncodedSlashes NoDecode
+	ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyPass /jenkins http://localhost:8080/jenkins/ nocanon
+  <Proxy http://localhost:8080/jenkins*>
+          Order deny,allow
+          Allow from all
+  </Proxy>
+</VirtualHost>
+
+##<VirtualHost *:80>
+#        ServerName jenkins-ci.mydomain.org
+#        ServerAdmin admin@mydomain.vm
+#
+#        Redirect / https://jenkins-ci.mydomain.org/
+#</VirtualHost>
+#
+#<Virtualhost *:443>
+#        ServerName jenkins-ci.mydomain.org
+#        ServerAdmin admin@mydomain.vm
+#
+#        LogLevel info
+#        LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+#        ErrorLog /var/log/jenkins-httpd-error.log
+#        CustomLog /var/log/jenkins-httpd-access.log combined
+#
+#        SSLEngine on
+#        SSLProxyEngine on
+#
+#        # SSL certificate and keys. Edit paths to whereever your SSL files are located
+#        SSLCertificateKeyFile /etc/ssl/private/mydomain_org.key
+#        SSLCertificateFile /etc/ssl/certs/__mydomain_org.crt
+#        SSLCertificateChainFile /etc/ssl/certs/__mydomain_org.ca-bundle
+#
+#        ProxyRequests Off
+#        ProxyPreserveHost On
+#        RewriteEngine On
+#        RequestHeader set X-Forwarded-Proto "https"
+#        AllowEncodedSlashes NoDecode
+#
+#        ProxyPass / http://localhost:8080/ nocanon
+#        ProxyPassReverse / http://localhost:8080/
+#
+#        <Proxy http://localhost:8080/*>
+#                Order deny,allow
+#                Allow from all
+#        </Proxy>
+#
+#        ProxyTimeout 120
+#</Virtualhost>
