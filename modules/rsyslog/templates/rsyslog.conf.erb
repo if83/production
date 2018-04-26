@@ -5,9 +5,9 @@
 
 #### MODULES ####
 
-<% if @hosttype['client'] -%>
+#<% if @hosttype['client'] -%>
 module(load="imfile" Mode="inotify")
-<% end -%>
+#<% end -%>
 
 # The imjournal module below is now used as a message source instead of imuxsock.
 $ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
