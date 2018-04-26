@@ -1,14 +1,13 @@
 class profile::tomcat (
   $docBase,
+  $dns_name             = $facts['networking']['fqdn'],
 ){
 
-  include java8
   include httpd
   include firewall
 
 # Appication variables
   $tomcat_version       = '7.0.76-3.el7_4'
-  $dns_name             = $facts['networking']['fqdn']
   $man_user             = 'manager'
   $password             = 'manager'
 
@@ -18,6 +17,13 @@ class profile::tomcat (
 
 # firewall variables
   $dports               = ['80', '8080']
+
+# Configure java8
+  class { 'java8':
+    version_major       => '172',
+    version_minor       => 'b11',
+    hash                => 'a58eab1ec242421181065cdc37240b08',
+  }
 
 # Configure tomcat
   class { 'tomcat':

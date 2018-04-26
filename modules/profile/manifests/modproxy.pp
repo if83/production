@@ -5,10 +5,10 @@
 class profile::modproxy (
 # config template for mod_proxy
   $proxy_template     = "profile/proxy.conf.epp",
+  $dns_name           = $facts['networking']['fqdn'],
 ){
 
 # config variables for mod_proxy
-  $dns_name           = $facts['networking']['fqdn']
   $proxy_conf_file    = '/etc/httpd/conf.d/tomcat.conf'
   
 # Configure rsyslog

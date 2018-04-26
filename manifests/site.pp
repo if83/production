@@ -36,9 +36,11 @@ node 'zabbix.if083' {
   include role::zabbix
 }
 
-node 'balancer' {
-  $web_serv_name_ip=["web1 192.168.56.161", "web2 192.168.56.162", "web3 192.168.56.163"]
+node 'balancer.if083' {
+  include role::balancer
+  $web_serv_name_ip=["192.168.56.161", "192.168.56.162", "192.168.56.163"]
   include haproxy
+  
 }
 
 node 'db.if083' {
